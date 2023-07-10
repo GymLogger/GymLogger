@@ -12,6 +12,7 @@ const user_1 = require("./resolvers/user");
 const data_source_1 = require("./data-source");
 const jsonwebtoken_1 = require("jsonwebtoken");
 const User_1 = require("./entities/User");
+const auth_1 = require("./auth");
 const main = async () => {
     data_source_1.dataSource
         .initialize()
@@ -43,6 +44,7 @@ const main = async () => {
         if (!user) {
             return res.send({ ok: false, accessToken: "" });
         }
+        return res.send({ ok: true, accessToken: (0, auth_1.createAccessToken)(user) });
     });
     app.listen(4000, () => {
         console.log(`🚀 Listening on port 4000`);

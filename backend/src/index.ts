@@ -10,6 +10,7 @@ import { UserResolver } from "./resolvers/user";
 import { dataSource } from "./data-source";
 import { verify } from "jsonwebtoken";
 import { User } from "./entities/User";
+import { createAccessToken } from "./auth";
 
 const main = async () => {
   dataSource
@@ -53,7 +54,7 @@ const main = async () => {
 
     //creates a refresh token when access token is also created
     // sendRefreshToken(res, createRefreshToken(user));
-    // return res.send({ ok: true, accessToken: createAccessToken(user) }); //creates new access token
+    return res.send({ ok: true, accessToken: createAccessToken(user) });
   });
 
   app.listen(4000, () => {
