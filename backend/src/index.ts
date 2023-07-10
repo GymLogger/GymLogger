@@ -54,6 +54,7 @@ const main = async () => {
 
     //creates a refresh token when access token is also created
     // sendRefreshToken(res, createRefreshToken(user));
+    console.log("test");
     return res.send({ ok: true, accessToken: createAccessToken(user) });
   });
 
