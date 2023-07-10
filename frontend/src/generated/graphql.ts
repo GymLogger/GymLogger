@@ -43,15 +43,21 @@ export type Exercise = {
   workout: Workout;
 };
 
-export type Mutation = {
-  __typename?: "Mutation";
-  login: Scalars["Boolean"]["output"];
-  register: Scalars["Boolean"]["output"];
+export type FieldError = {
+  __typename?: "FieldError";
+  field: Scalars["String"]["output"];
+  message: Scalars["String"]["output"];
 };
 
-export type MutationLoginArgs = {
-  email: Scalars["String"]["input"];
-  password: Scalars["String"]["input"];
+export type LoginResponse = {
+  __typename?: "LoginResponse";
+  accessToken?: Maybe<Scalars["String"]["output"]>;
+  errors?: Maybe<Array<FieldError>>;
+};
+
+export type Mutation = {
+  __typename?: "Mutation";
+  register: Scalars["Boolean"]["output"];
 };
 
 export type MutationRegisterArgs = {
@@ -63,6 +69,12 @@ export type Query = {
   __typename?: "Query";
   getUsers: Array<User>;
   hello: Scalars["String"]["output"];
+  login: LoginResponse;
+};
+
+export type QueryLoginArgs = {
+  email: Scalars["String"]["input"];
+  password: Scalars["String"]["input"];
 };
 
 export type Set = {
@@ -99,6 +111,24 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never }>;
 export type GetUsersQuery = {
   __typename?: "Query";
   getUsers: Array<{ __typename?: "User"; id: number; email: string }>;
+};
+
+export type LoginQueryVariables = Exact<{
+  email: Scalars["String"]["input"];
+  password: Scalars["String"]["input"];
+}>;
+
+export type LoginQuery = {
+  __typename?: "Query";
+  login: {
+    __typename?: "LoginResponse";
+    accessToken?: string | null;
+    errors?: Array<{
+      __typename?: "FieldError";
+      field: string;
+      message: string;
+    }> | null;
+  };
 };
 
 export const GetUsersDocument = gql`
@@ -153,4 +183,57 @@ export type GetUsersLazyQueryHookResult = ReturnType<
 export type GetUsersQueryResult = Apollo.QueryResult<
   GetUsersQuery,
   GetUsersQueryVariables
+>;
+export const LoginDocument = gql`
+  query Login($email: String!, $password: String!) {
+    login(password: $password, email: $email) {
+      accessToken
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+/**
+ * __useLoginQuery__
+ *
+ * To run a query within a React component, call `useLoginQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoginQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoginQuery({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useLoginQuery(
+  baseOptions: Apollo.QueryHookOptions<LoginQuery, LoginQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<LoginQuery, LoginQueryVariables>(
+    LoginDocument,
+    options
+  );
+}
+export function useLoginLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<LoginQuery, LoginQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<LoginQuery, LoginQueryVariables>(
+    LoginDocument,
+    options
+  );
+}
+export type LoginQueryHookResult = ReturnType<typeof useLoginQuery>;
+export type LoginLazyQueryHookResult = ReturnType<typeof useLoginLazyQuery>;
+export type LoginQueryResult = Apollo.QueryResult<
+  LoginQuery,
+  LoginQueryVariables
 >;

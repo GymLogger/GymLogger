@@ -12,12 +12,15 @@ const Testing = ({ route, navigation }: Props) => {
   const [users, setUsers] = useState(Array<any>);
   const { login } = useContext(AuthContext);
   const { navigate } = useNavigation<StackNavigationProp<RootStackParamList>>();
+
   const { logout } = useContext(AuthContext);
+
   useEffect(() => {
     if (data) {
       setUsers(data.getUsers);
     }
   }, [data]);
+
   return (
     <ScrollView>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>

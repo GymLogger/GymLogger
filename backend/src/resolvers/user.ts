@@ -1,7 +1,31 @@
 import { User } from "../entities/User";
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  Field,
+  ObjectType,
+} from "type-graphql";
 import { compare, hash } from "bcryptjs";
+import { createAccessToken } from "../auth";
 
+@ObjectType()
+export class FieldError {
+  @Field()
+  field: string;
+
+  @Field()
+  message: string;
+}
+@ObjectType()
+class LoginResponse {
+  @Field(() => String, { nullable: true })
+  accessToken?: string;
+
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+}
 @Resolver(User)
 export class UserResolver {
   @Query(() => String)
@@ -14,21 +38,35 @@ export class UserResolver {
     return User.find();
   }
 
-  @Mutation(() => Boolean)
+  @Query(() => LoginResponse)
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string
     // @Ctx() { res }: Context
-  ): Promise<Boolean> {
+  ): Promise<LoginResponse> {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      throw new Error("invalid login");
+      return {
+        errors: [
+          {
+            field: "email",
+            message: "That username or email does not exist",
+          },
+        ],
+      };
     }
 
     const valid = await compare(password, user.password);
 
     if (!valid) {
-      throw new Error("invalid password");
+      return {
+        errors: [
+          {
+            field: "password",
+            message: "Invalid login",
+          },
+        ],
+      };
     }
 
     //logged in successfully
@@ -38,7 +76,9 @@ export class UserResolver {
 
     //first arg is what's being stored, 2nd arg is the secret string
     //access token
-    return true;
+    return {
+      accessToken: createAccessToken(user),
+    };
   }
 
   @Mutation(() => Boolean)

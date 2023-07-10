@@ -32,13 +32,13 @@ const client = new ApolloClient({
 });
 export default function App() {
   return (
-    <AuthProvider>
-      <ApolloProvider client={client}>
+    <ApolloProvider client={client}>
+      <AuthProvider>
         <NavigationContainer>
           <AppNav />
         </NavigationContainer>
-      </ApolloProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ApolloProvider>
   );
 }
 

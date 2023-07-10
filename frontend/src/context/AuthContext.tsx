@@ -1,5 +1,7 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLoginQuery } from "../generated/graphql";
+import { verify } from "jsonwebtoken";
 
 interface AuthProps {
   children?: ReactNode;
@@ -24,13 +26,29 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<string | null>(null);
 
+  const [verifyState, setVerifyState] = useState<any>(null);
+
+  const { data } = useLoginQuery({
+    variables: { email: "Colin1", password: "Colin1" },
+  });
+
+  //asdfefe is access
+  //iwueyiwuye is refresh
+
+  useEffect(() => {
+    const verifyToken = verify(data?.login?.accessToken, "asdfefe");
+    console.log("verifyToken: ", verifyToken);
+    setVerifyState(verifyToken);
+  }, [data]);
+
   const login = () => {
     setIsLoading(true);
     setUserToken("asdfqwefsdvczsdf");
     // AsyncStorage.setItem("userToken", userToken as string);
     AsyncStorage.setItem("userToken", "asdfqwefsdvczsdf");
     setIsLoading(false);
-    console.log("logging in, token: ", userToken);
+    console.log("jwt", data.login.accessToken);
+    console.log("VerifyToken: ", verifyState);
   };
 
   const logout = () => {
@@ -38,7 +56,7 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
     setUserToken(null);
     AsyncStorage.removeItem("userToken");
     setIsLoading(false);
-    console.log("logging out, token: ", userToken);
+    // console.log("jwt", data.login.accessToken);
   };
 
   const isLoggedIn = async () => {
