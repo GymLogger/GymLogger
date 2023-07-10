@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLoginQuery } from "../generated/graphql";
-import { verify } from "jsonwebtoken";
+import { decode } from "react-native-pure-jwt";
 
 interface AuthProps {
   children?: ReactNode;
@@ -26,29 +26,39 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<string | null>(null);
 
-  const [verifyState, setVerifyState] = useState<any>(null);
+  const [verifyState, setVerifyState] = useState<any>();
 
   const { data } = useLoginQuery({
     variables: { email: "Colin1", password: "Colin1" },
   });
 
+  let payload = data?.login.accessToken;
   //asdfefe is access
   //iwueyiwuye is refresh
 
-  useEffect(() => {
-    const verifyToken = verify(data?.login?.accessToken, "asdfefe");
-    console.log("verifyToken: ", verifyToken);
-    setVerifyState(verifyToken);
-  }, [data]);
+  // useEffect(() => {
+  //   console.log("payload: ", payload);
+  //   console.log("data: ", data);
 
-  const login = () => {
+  //   const validate = async () => {
+  //     const verifyToken = await decode(payload, "asdfefe");
+  //     console.log("inside func, verifyToken: ", verifyState);
+  //     setVerifyState(verifyToken);
+  //   };
+
+  //   validate();
+  //   return () => {};
+  // }, []);
+
+  const login = async () => {
     setIsLoading(true);
+    console.log("payload: ", payload);
+    // console.log("verifyToken: ", verifyToken)
     setUserToken("asdfqwefsdvczsdf");
     // AsyncStorage.setItem("userToken", userToken as string);
     AsyncStorage.setItem("userToken", "asdfqwefsdvczsdf");
     setIsLoading(false);
     console.log("jwt", data.login.accessToken);
-    console.log("VerifyToken: ", verifyState);
   };
 
   const logout = () => {

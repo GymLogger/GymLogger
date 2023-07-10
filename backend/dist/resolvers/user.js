@@ -17,6 +17,7 @@ const User_1 = require("../entities/User");
 const type_graphql_1 = require("type-graphql");
 const bcryptjs_1 = require("bcryptjs");
 const auth_1 = require("../auth");
+const isAuth_1 = require("../isAuth");
 let FieldError = exports.FieldError = class FieldError {
 };
 __decorate([
@@ -49,6 +50,9 @@ let UserResolver = exports.UserResolver = class UserResolver {
     }
     getUsers() {
         return User_1.User.find();
+    }
+    bye({ payload }) {
+        return `your user id is ${payload.userId}`;
     }
     async login(email, password) {
         const user = await User_1.User.findOne({ where: { email } });
@@ -104,6 +108,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], UserResolver.prototype, "getUsers", null);
+__decorate([
+    (0, type_graphql_1.Query)(() => String),
+    (0, type_graphql_1.UseMiddleware)(isAuth_1.isAuth),
+    __param(0, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserResolver.prototype, "bye", null);
 __decorate([
     (0, type_graphql_1.Query)(() => LoginResponse),
     __param(0, (0, type_graphql_1.Arg)("email")),

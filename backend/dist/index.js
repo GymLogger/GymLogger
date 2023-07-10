@@ -10,6 +10,8 @@ const type_graphql_1 = require("type-graphql");
 require("reflect-metadata");
 const user_1 = require("./resolvers/user");
 const data_source_1 = require("./data-source");
+const jsonwebtoken_1 = require("jsonwebtoken");
+const User_1 = require("./entities/User");
 const main = async () => {
     data_source_1.dataSource
         .initialize()
@@ -22,6 +24,25 @@ const main = async () => {
     const app = (0, express_1.default)();
     app.get("/", (_, res) => {
         res.send("API working");
+    });
+    app.post("/refresh_token", async (req, res) => {
+        const token = req.cookies.jid;
+        console.log("entered post req");
+        if (!token) {
+            return res.send({ ok: false, accessToken: "" });
+        }
+        let payload = null;
+        try {
+            payload = (0, jsonwebtoken_1.verify)(token, process.env.REFRESH_TOKEN_SECRET);
+        }
+        catch (error) {
+            console.log(error);
+            return res.send({ ok: false, accessToken: "" });
+        }
+        const user = await User_1.User.findOne({ where: { id: payload.userId } });
+        if (!user) {
+            return res.send({ ok: false, accessToken: "" });
+        }
     });
     app.listen(4000, () => {
         console.log(`🚀 Listening on port 4000`);

@@ -6,9 +6,13 @@ import {
   Mutation,
   Field,
   ObjectType,
+  UseMiddleware,
+  Ctx,
 } from "type-graphql";
 import { compare, hash } from "bcryptjs";
 import { createAccessToken } from "../auth";
+import { Context } from "../types";
+import { isAuth } from "../isAuth";
 
 @ObjectType()
 export class FieldError {
@@ -36,6 +40,12 @@ export class UserResolver {
   @Query(() => [User])
   getUsers() {
     return User.find();
+  }
+
+  @Query(() => String)
+  @UseMiddleware(isAuth)
+  bye(@Ctx() { payload }: Context) {
+    return `your user id is ${payload!.userId}`;
   }
 
   @Query(() => LoginResponse)

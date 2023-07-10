@@ -15,17 +15,30 @@ import {
 } from "@apollo/client";
 import { AuthProvider } from "./src/context/AuthContext";
 import { AppNav } from "./src/nagivation/AppNav";
+import { setContext } from "@apollo/client/link/context";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 //create http link based on base url
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri: "/graphql",
+});
+
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem("token");
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
 });
 
 //Create apollo client object
 const client = new ApolloClient({
-  link: httpLink,
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
   //may need to include credentials
   // credentials:'include'

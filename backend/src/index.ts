@@ -8,6 +8,8 @@ import { Context } from "./types";
 import "reflect-metadata";
 import { UserResolver } from "./resolvers/user";
 import { dataSource } from "./data-source";
+import { verify } from "jsonwebtoken";
+import { User } from "./entities/User";
 
 const main = async () => {
   dataSource
@@ -23,6 +25,35 @@ const main = async () => {
 
   app.get("/", (_, res) => {
     res.send("API working");
+  });
+
+  //special route for refreshing the token so it doesnt go to graphql
+  app.post("/refresh_token", async (req, res) => {
+    const token = req.cookies.jid; //read cookie, which is refresh token
+    console.log("entered post req");
+    //dont refresh token if it isnt there
+    if (!token) {
+      return res.send({ ok: false, accessToken: "" });
+    }
+
+    let payload: any = null;
+    try {
+      //verify from jsonwebtoken, check that token has the correct secret and is not expired
+      payload = verify(token, process.env.REFRESH_TOKEN_SECRET!);
+    } catch (error) {
+      console.log(error);
+      return res.send({ ok: false, accessToken: "" });
+    }
+
+    //token must be valid by this point
+    const user = await User.findOne({ where: { id: payload.userId } });
+    if (!user) {
+      return res.send({ ok: false, accessToken: "" });
+    }
+
+    //creates a refresh token when access token is also created
+    // sendRefreshToken(res, createRefreshToken(user));
+    // return res.send({ ok: true, accessToken: createAccessToken(user) }); //creates new access token
   });
 
   app.listen(4000, () => {
