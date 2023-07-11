@@ -43,10 +43,23 @@ export type Exercise = {
   workout: Workout;
 };
 
+export type FieldError = {
+  __typename?: "FieldError";
+  field: Scalars["String"]["output"];
+  message: Scalars["String"]["output"];
+};
+
+export type LoginResponse = {
+  __typename?: "LoginResponse";
+  accessToken?: Maybe<Scalars["String"]["output"]>;
+  errors?: Maybe<Array<FieldError>>;
+};
+
 export type Mutation = {
   __typename?: "Mutation";
-  login: Scalars["Boolean"]["output"];
+  login: LoginResponse;
   register: Scalars["Boolean"]["output"];
+  revokeRefreshTokensForUser: Scalars["Boolean"]["output"];
 };
 
 export type MutationLoginArgs = {
@@ -59,8 +72,13 @@ export type MutationRegisterArgs = {
   password: Scalars["String"]["input"];
 };
 
+export type MutationRevokeRefreshTokensForUserArgs = {
+  userId: Scalars["Int"]["input"];
+};
+
 export type Query = {
   __typename?: "Query";
+  bye: Scalars["String"]["output"];
   getUsers: Array<User>;
   hello: Scalars["String"]["output"];
 };
@@ -94,6 +112,28 @@ export type Workout = {
   updatedAt: Scalars["String"]["output"];
 };
 
+export type LoginMutationVariables = Exact<{
+  email: Scalars["String"]["input"];
+  password: Scalars["String"]["input"];
+}>;
+
+export type LoginMutation = {
+  __typename?: "Mutation";
+  login: {
+    __typename?: "LoginResponse";
+    accessToken?: string | null;
+    errors?: Array<{
+      __typename?: "FieldError";
+      field: string;
+      message: string;
+    }> | null;
+  };
+};
+
+export type ByeQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ByeQuery = { __typename?: "Query"; bye: string };
+
 export type GetUsersQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetUsersQuery = {
@@ -101,6 +141,94 @@ export type GetUsersQuery = {
   getUsers: Array<{ __typename?: "User"; id: number; email: string }>;
 };
 
+export const LoginDocument = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(password: $email, email: $password) {
+      accessToken
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+export type LoginMutationFn = Apollo.MutationFunction<
+  LoginMutation,
+  LoginMutationVariables
+>;
+
+/**
+ * __useLoginMutation__
+ *
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useLoginMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    LoginMutation,
+    LoginMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<LoginMutation, LoginMutationVariables>(
+    LoginDocument,
+    options
+  );
+}
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<
+  LoginMutation,
+  LoginMutationVariables
+>;
+export const ByeDocument = gql`
+  query Bye {
+    bye
+  }
+`;
+
+/**
+ * __useByeQuery__
+ *
+ * To run a query within a React component, call `useByeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useByeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useByeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useByeQuery(
+  baseOptions?: Apollo.QueryHookOptions<ByeQuery, ByeQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ByeQuery, ByeQueryVariables>(ByeDocument, options);
+}
+export function useByeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ByeQuery, ByeQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ByeQuery, ByeQueryVariables>(ByeDocument, options);
+}
+export type ByeQueryHookResult = ReturnType<typeof useByeQuery>;
+export type ByeLazyQueryHookResult = ReturnType<typeof useByeLazyQuery>;
+export type ByeQueryResult = Apollo.QueryResult<ByeQuery, ByeQueryVariables>;
 export const GetUsersDocument = gql`
   query GetUsers {
     getUsers {

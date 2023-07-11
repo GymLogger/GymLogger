@@ -11,6 +11,7 @@ const Signup = () => {
     if (data) {
       setUsers(data.getUsers);
     }
+    console.log("data: ", data);
   }, [data]);
   return (
     <ScrollView>

@@ -1,6 +1,9 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { decode } from "react-native-pure-jwt";
+import { useLoginMutation } from "../generated/graphql";
+
 interface AuthProps {
   children?: ReactNode;
 }
@@ -24,13 +27,21 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<string | null>(null);
 
-  const login = () => {
-    setIsLoading(true);
+  const [verifyState, setVerifyState] = useState<any>();
+
+  // const { data } = useLoginQuery({
+  //   variables: { email: "Colin1", password: "Colin1" },
+  // });
+
+  //asdfefe is access
+  //iwueyiwuye is refresh
+
+  const login = async () => {
     setUserToken("asdfqwefsdvczsdf");
     // AsyncStorage.setItem("userToken", userToken as string);
     AsyncStorage.setItem("userToken", "asdfqwefsdvczsdf");
     setIsLoading(false);
-    console.log("logging in, token: ", userToken);
+    // console.log("jwt", data.login.accessToken);
   };
 
   const logout = () => {
@@ -38,7 +49,7 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
     setUserToken(null);
     AsyncStorage.removeItem("userToken");
     setIsLoading(false);
-    console.log("logging out, token: ", userToken);
+    // console.log("jwt", data.login.accessToken);
   };
 
   const isLoggedIn = async () => {

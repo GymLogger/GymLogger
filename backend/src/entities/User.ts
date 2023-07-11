@@ -40,4 +40,7 @@ export class User extends BaseEntity {
     eager: true,
   })
   workouts!: Workout[];
+
+  @Column("int", { default: 0 })
+  tokenVersion: number;
 }

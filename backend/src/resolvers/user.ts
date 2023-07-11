@@ -1,7 +1,38 @@
 import { User } from "../entities/User";
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  Field,
+  ObjectType,
+  UseMiddleware,
+  Ctx,
+  Int,
+} from "type-graphql";
 import { compare, hash } from "bcryptjs";
+import { createAccessToken, createRefreshToken } from "../auth";
+import { Context } from "../types";
+import { isAuth } from "../isAuth";
+import { dataSource } from "../data-source";
+import { sendRefreshToken } from "../sendRefreshToken";
 
+@ObjectType()
+export class FieldError {
+  @Field()
+  field: string;
+
+  @Field()
+  message: string;
+}
+@ObjectType()
+class LoginResponse {
+  @Field(() => String, { nullable: true })
+  accessToken?: string;
+
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+}
 @Resolver(User)
 export class UserResolver {
   @Query(() => String)
@@ -14,31 +45,71 @@ export class UserResolver {
     return User.find();
   }
 
+  @Query(() => String)
+  @UseMiddleware(isAuth)
+  bye(@Ctx() { payload }: Context) {
+    return `your user id is ${payload!.userId}`;
+  }
+
+  //TODO - make this less hacky
   @Mutation(() => Boolean)
+  async revokeRefreshTokensForUser(@Arg("userId", () => Int) userId: number) {
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) {
+      return false;
+    }
+
+    const currTokenVersion = user.tokenVersion;
+
+    await dataSource
+      .createQueryBuilder()
+      .update(User)
+      .set({ tokenVersion: currTokenVersion + 1 })
+      .where("id = :id", { id: userId })
+      .execute();
+
+    return true;
+  }
+
+  @Mutation(() => LoginResponse)
   async login(
     @Arg("email") email: string,
-    @Arg("password") password: string
-    // @Ctx() { res }: Context
-  ): Promise<Boolean> {
+    @Arg("password") password: string,
+    @Ctx() { res }: Context
+  ): Promise<LoginResponse> {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      throw new Error("invalid login");
+      return {
+        errors: [
+          {
+            field: "email",
+            message: "That username or email does not exist",
+          },
+        ],
+      };
     }
 
     const valid = await compare(password, user.password);
 
     if (!valid) {
-      throw new Error("invalid password");
+      return {
+        errors: [
+          {
+            field: "password",
+            message: "Invalid login",
+          },
+        ],
+      };
     }
 
     //logged in successfully
+    //refresh token sent in cookie
+    sendRefreshToken(res, createRefreshToken(user));
 
-    //refresh token
-    // sendRefreshToken(res, createRefreshToken(user));
-
-    //first arg is what's being stored, 2nd arg is the secret string
     //access token
-    return true;
+    return {
+      accessToken: createAccessToken(user),
+    };
   }
 
   @Mutation(() => Boolean)

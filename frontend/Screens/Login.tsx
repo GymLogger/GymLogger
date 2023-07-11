@@ -4,10 +4,19 @@ import { useNavigation } from "@react-navigation/native";
 import { Props, RootStackParamList } from "../types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AuthContext } from "../src/context/AuthContext";
+import { useByeQuery, useLoginMutation } from "../src/generated/graphql";
+import { setAccessToken } from "../src/accessToken";
 
 const Login = ({ route, navigation }: Props) => {
   const { navigate } = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { login } = useContext(AuthContext);
+  const { data, error } = useByeQuery();
+
+  const [loginApollo] = useLoginMutation();
+  // console.log("data: ", data);
+  if (error) {
+    console.log("error: ", error);
+  }
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>This is a Login Screen</Text>
@@ -15,12 +24,21 @@ const Login = ({ route, navigation }: Props) => {
         <Text>Move to Signup Screen</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => {
-          login();
+        onPress={async () => {
+          const response = await loginApollo({
+            variables: { email: "Colin1", password: "Colin1" },
+          });
+          console.log("response: ", response);
+
+          if (response && response.data) {
+            setAccessToken(response.data.login.accessToken);
+            login();
+          }
         }}
       >
         <Text>Login</Text>
       </TouchableOpacity>
+      {/* {!loading && !!data && <Text>{data.bye}</Text>} */}
     </View>
   );
 };

@@ -15,30 +15,54 @@ import {
 } from "@apollo/client";
 import { AuthProvider } from "./src/context/AuthContext";
 import { AppNav } from "./src/nagivation/AppNav";
+import { setContext } from "@apollo/client/link/context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAccessToken } from "./src/accessToken";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 //create http link based on base url
 const httpLink = createHttpLink({
   uri: "http://localhost:4000/graphql",
+  // credentials: "include",
+});
+
+const authLink = setContext(async (_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = getAccessToken();
+  console.log("token: ", token);
+  // return the headers to the context so httpLink can read them
+  headers = {
+    ...headers,
+    authorization: token ? `Bearer ${token}` : "",
+  };
+  console.log("headers: ", headers);
+  return {
+    headers: {
+      ...headers,
+      //might need capital A
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  };
 });
 
 //Create apollo client object
 const client = new ApolloClient({
-  link: httpLink,
+  link: authLink.concat(httpLink),
+  // link: httpLink,
   cache: new InMemoryCache(),
   //may need to include credentials
   // credentials:'include'
 });
 export default function App() {
   return (
-    <AuthProvider>
-      <ApolloProvider client={client}>
+    <ApolloProvider client={client}>
+      <AuthProvider>
         <NavigationContainer>
           <AppNav />
         </NavigationContainer>
-      </ApolloProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ApolloProvider>
   );
 }
 
