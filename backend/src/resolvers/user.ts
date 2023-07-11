@@ -71,7 +71,7 @@ export class UserResolver {
     return true;
   }
 
-  @Query(() => LoginResponse)
+  @Mutation(() => LoginResponse)
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string,
@@ -103,8 +103,6 @@ export class UserResolver {
     }
 
     //logged in successfully
-    res.cookie("testcookie1", "blah", { httpOnly: true });
-
     //refresh token sent in cookie
     sendRefreshToken(res, createRefreshToken(user));
 

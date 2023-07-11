@@ -1,21 +1,22 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLoginQuery } from "../generated/graphql";
+
 import { decode } from "react-native-pure-jwt";
+import { useLoginMutation } from "../generated/graphql";
 
 interface AuthProps {
   children?: ReactNode;
 }
 
 interface ProviderProps {
-  login: () => void;
+  login: (email: string, password: string) => {};
   logout: () => void;
   isLoading: boolean;
   userToken: string | null;
 }
 
 const InitialContext: ProviderProps = {
-  login: () => {},
+  login: async (email: "", password: "") => {},
   logout: () => {},
   isLoading: true,
   userToken: null,
@@ -28,18 +29,20 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
 
   const [verifyState, setVerifyState] = useState<any>();
 
-  const { data } = useLoginQuery({
-    variables: { email: "Colin1", password: "Colin1" },
-  });
+  // const { data } = useLoginQuery({
+  //   variables: { email: "Colin1", password: "Colin1" },
+  // });
 
-  let payload = data?.login.accessToken;
   //asdfefe is access
   //iwueyiwuye is refresh
 
-  const login = async () => {
+  const login = async (email: string, password: string) => {
+    const data = useLoginMutation({
+      variables: { email: email, password: password },
+    });
     setIsLoading(true);
-    console.log("payload: ", payload);
-    // console.log("verifyToken: ", verifyToken)
+
+    console.log("payload: ", data);
     setUserToken("asdfqwefsdvczsdf");
     // AsyncStorage.setItem("userToken", userToken as string);
     AsyncStorage.setItem("userToken", "asdfqwefsdvczsdf");

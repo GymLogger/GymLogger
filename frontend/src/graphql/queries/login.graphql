@@ -1,9 +1,0 @@
-query Login($email: String!, $password: String!) {
-  login(password: $password, email: $email) {
-    accessToken
-    errors {
-      field
-      message
-    }
-  }
-}

@@ -35,8 +35,9 @@ const main = async () => {
 
   //special route for refreshing the token so it doesnt go to graphql
   app.post("/refresh_token", async (req, res) => {
-    const token = req.cookies.jid; //read cookie, which is refresh token
+    const token = req.cookies.oid; //read cookie, which is refresh token
     console.log("entered post req");
+    console.log("token: ", req.cookies.oid);
     //dont refresh token if it isnt there
     if (!token) {
       return res.send({ ok: false, accessToken: "" });
@@ -45,7 +46,8 @@ const main = async () => {
     let payload: any = null;
     try {
       //verify from jsonwebtoken, check that token has the correct secret and is not expired
-      payload = verify(token, process.env.REFRESH_TOKEN_SECRET!);
+      //TODO fix hardcoding
+      payload = verify(token, "iwueyiwuye");
     } catch (error) {
       console.log(error);
       return res.send({ ok: false, accessToken: "" });

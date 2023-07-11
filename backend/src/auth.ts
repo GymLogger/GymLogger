@@ -5,7 +5,7 @@ import "dotenv/config";
 //TODO: use environment variables
 export const createAccessToken = (user: User) => {
   return sign({ userId: user.id }, "asdfefe", {
-    expiresIn: "10y",
+    expiresIn: "15m",
   });
 };
 
