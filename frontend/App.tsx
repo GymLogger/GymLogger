@@ -16,21 +16,29 @@ import {
 import { AuthProvider } from "./src/context/AuthContext";
 import { AppNav } from "./src/nagivation/AppNav";
 import { setContext } from "@apollo/client/link/context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 //create http link based on base url
 const httpLink = createHttpLink({
-  uri: "/graphql",
+  uri: "http://localhost:4000/graphql",
 });
 
-const authLink = setContext((_, { headers }) => {
+const authLink = setContext(async (_, { headers }) => {
   // get the authentication token from local storage if it exists
-  const token = localStorage.getItem("token");
+  const token = await AsyncStorage.getItem("userToken");
+  console.log("token: ", token);
   // return the headers to the context so httpLink can read them
+  headers = {
+    ...headers,
+    authorization: token ? `Bearer ${token}` : "",
+  };
+  console.log("headers: ", headers);
   return {
     headers: {
       ...headers,
+      //might need capital A
       authorization: token ? `Bearer ${token}` : "",
     },
   };
@@ -39,6 +47,7 @@ const authLink = setContext((_, { headers }) => {
 //Create apollo client object
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
+  // link: httpLink,
   cache: new InMemoryCache(),
   //may need to include credentials
   // credentials:'include'

@@ -8,13 +8,16 @@ export const isAuth: MiddlewareFn<Context> = ({ context }, next) => {
   // bearer <random looking string>
   const authorization = context.req.headers["authorization"];
 
+  console.log("authorization: ", context.req.headers);
+
   if (!authorization) {
     throw new Error("not authenticated");
   }
   try {
     const token = authorization.split(" ")[1]; //gets 2nd value after delimited
     //must use same secret to verify token as it was signed with
-    const payload = verify(token, process.env.ACCESS_TOKEN_SECRET as string); //payload is {userId: user.id}
+    //TODO use env variables
+    const payload = verify(token, "asdfefe"); //payload is {userId: user.id}
     //stores payload on context
     interface payloadReturn {
       userId: string;

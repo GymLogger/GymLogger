@@ -36,20 +36,6 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
   //asdfefe is access
   //iwueyiwuye is refresh
 
-  // useEffect(() => {
-  //   console.log("payload: ", payload);
-  //   console.log("data: ", data);
-
-  //   const validate = async () => {
-  //     const verifyToken = await decode(payload, "asdfefe");
-  //     console.log("inside func, verifyToken: ", verifyState);
-  //     setVerifyState(verifyToken);
-  //   };
-
-  //   validate();
-  //   return () => {};
-  // }, []);
-
   const login = async () => {
     setIsLoading(true);
     console.log("payload: ", payload);
@@ -58,7 +44,7 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
     // AsyncStorage.setItem("userToken", userToken as string);
     AsyncStorage.setItem("userToken", "asdfqwefsdvczsdf");
     setIsLoading(false);
-    console.log("jwt", data.login.accessToken);
+    // console.log("jwt", data.login.accessToken);
   };
 
   const logout = () => {

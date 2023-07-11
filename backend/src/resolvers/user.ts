@@ -8,11 +8,14 @@ import {
   ObjectType,
   UseMiddleware,
   Ctx,
+  Int,
 } from "type-graphql";
 import { compare, hash } from "bcryptjs";
-import { createAccessToken } from "../auth";
+import { createAccessToken, createRefreshToken } from "../auth";
 import { Context } from "../types";
 import { isAuth } from "../isAuth";
+import { dataSource } from "../data-source";
+import { sendRefreshToken } from "../sendRefreshToken";
 
 @ObjectType()
 export class FieldError {
@@ -48,11 +51,31 @@ export class UserResolver {
     return `your user id is ${payload!.userId}`;
   }
 
+  //TODO - make this less hacky
+  @Mutation(() => Boolean)
+  async revokeRefreshTokensForUser(@Arg("userId", () => Int) userId: number) {
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) {
+      return false;
+    }
+
+    const currTokenVersion = user.tokenVersion;
+
+    await dataSource
+      .createQueryBuilder()
+      .update(User)
+      .set({ tokenVersion: currTokenVersion + 1 })
+      .where("id = :id", { id: userId })
+      .execute();
+
+    return true;
+  }
+
   @Query(() => LoginResponse)
   async login(
     @Arg("email") email: string,
-    @Arg("password") password: string
-    // @Ctx() { res }: Context
+    @Arg("password") password: string,
+    @Ctx() { res }: Context
   ): Promise<LoginResponse> {
     const user = await User.findOne({ where: { email } });
     if (!user) {
@@ -80,11 +103,11 @@ export class UserResolver {
     }
 
     //logged in successfully
+    res.cookie("testcookie1", "blah", { httpOnly: true });
 
-    //refresh token
-    // sendRefreshToken(res, createRefreshToken(user));
+    //refresh token sent in cookie
+    sendRefreshToken(res, createRefreshToken(user));
 
-    //first arg is what's being stored, 2nd arg is the secret string
     //access token
     return {
       accessToken: createAccessToken(user),

@@ -7,10 +7,14 @@ import { buildSchema } from "type-graphql";
 import { Context } from "./types";
 import "reflect-metadata";
 import { UserResolver } from "./resolvers/user";
+
 import { dataSource } from "./data-source";
 import { verify } from "jsonwebtoken";
 import { User } from "./entities/User";
-import { createAccessToken } from "./auth";
+import { createAccessToken, createRefreshToken } from "./auth";
+import { sendRefreshToken } from "./sendRefreshToken";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const main = async () => {
   dataSource
@@ -23,6 +27,7 @@ const main = async () => {
     });
 
   const app = express();
+  app.use(cookieParser());
 
   app.get("/", (_, res) => {
     res.send("API working");
@@ -46,17 +51,27 @@ const main = async () => {
       return res.send({ ok: false, accessToken: "" });
     }
 
-    //token must be valid by this point
+    //token must be valid by this point, but token version may be wrong
     const user = await User.findOne({ where: { id: payload.userId } });
     if (!user) {
       return res.send({ ok: false, accessToken: "" });
     }
 
+    if (user.tokenVersion !== payload.tokenVersion) {
+      return res.send({ ok: false, accessToken: "" });
+    }
     //creates a refresh token when access token is also created
-    // sendRefreshToken(res, createRefreshToken(user));
-    console.log("test");
+    sendRefreshToken(res, createRefreshToken(user));
     return res.send({ ok: true, accessToken: createAccessToken(user) });
   });
+
+  app.use(
+    "/graphql",
+    cors<cors.CorsRequest>({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
 
   app.listen(4000, () => {
     console.log(`🚀 Listening on port 4000`);

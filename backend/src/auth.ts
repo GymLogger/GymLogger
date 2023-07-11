@@ -11,7 +11,12 @@ export const createAccessToken = (user: User) => {
 
 //TODO: use environment variables
 export const createRefreshToken = (user: User) => {
-  return sign({ userId: user.id }, "iwueyiwuye", {
-    expiresIn: "10y",
-  });
+  //pass in the token version
+  return sign(
+    { userId: user.id, tokenVersion: user.tokenVersion },
+    "iwueyiwuye",
+    {
+      expiresIn: "10y",
+    }
+  );
 };
