@@ -9,10 +9,10 @@ import { setAccessToken } from "../src/accessToken";
 
 const Login = ({ route, navigation }: Props) => {
   const { navigate } = useNavigation<StackNavigationProp<RootStackParamList>>();
-  // const { login } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const { data, error } = useByeQuery();
 
-  const [login] = useLoginMutation();
+  const [loginApollo] = useLoginMutation();
   // console.log("data: ", data);
   if (error) {
     console.log("error: ", error);
@@ -25,13 +25,14 @@ const Login = ({ route, navigation }: Props) => {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={async () => {
-          const response = await login({
+          const response = await loginApollo({
             variables: { email: "Colin1", password: "Colin1" },
           });
           console.log("response: ", response);
 
           if (response && response.data) {
             setAccessToken(response.data.login.accessToken);
+            login();
           }
         }}
       >

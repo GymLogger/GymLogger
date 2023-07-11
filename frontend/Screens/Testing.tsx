@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { AuthContext } from "../src/context/AuthContext";
-import { useGetUsersQuery } from "../src/generated/graphql";
+import { useByeQuery, useGetUsersQuery } from "../src/generated/graphql";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Props, RootStackParamList } from "../types";
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +14,7 @@ const Testing = ({ route, navigation }: Props) => {
   const { navigate } = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const { logout } = useContext(AuthContext);
+  const { data: dataBye } = useByeQuery();
 
   useEffect(() => {
     if (data) {
@@ -31,6 +32,10 @@ const Testing = ({ route, navigation }: Props) => {
       ))}
       <TouchableOpacity onPress={() => logout()}>
         <Text>Move back Signup Screen and log out</Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        {/* <Text>bye</Text> */}
+        {dataBye ? <Text>{dataBye.bye}</Text> : <Text>no ID</Text>}
       </TouchableOpacity>
     </ScrollView>
   );

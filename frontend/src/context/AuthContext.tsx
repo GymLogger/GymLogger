@@ -9,14 +9,14 @@ interface AuthProps {
 }
 
 interface ProviderProps {
-  login: (email: string, password: string) => {};
+  login: () => void;
   logout: () => void;
   isLoading: boolean;
   userToken: string | null;
 }
 
 const InitialContext: ProviderProps = {
-  login: async (email: "", password: "") => {},
+  login: () => {},
   logout: () => {},
   isLoading: true,
   userToken: null,
@@ -36,13 +36,7 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
   //asdfefe is access
   //iwueyiwuye is refresh
 
-  const login = async (email: string, password: string) => {
-    const data = useLoginMutation({
-      variables: { email: email, password: password },
-    });
-    setIsLoading(true);
-
-    console.log("payload: ", data);
+  const login = async () => {
     setUserToken("asdfqwefsdvczsdf");
     // AsyncStorage.setItem("userToken", userToken as string);
     AsyncStorage.setItem("userToken", "asdfqwefsdvczsdf");
