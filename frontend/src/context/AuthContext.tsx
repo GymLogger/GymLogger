@@ -9,23 +9,23 @@ interface AuthProps {
 }
 
 interface ProviderProps {
-  login: () => void;
+  login: (input: string) => void;
   logout: () => void;
   isLoading: boolean;
   userToken: string | null;
 }
 
 const InitialContext: ProviderProps = {
-  login: () => {},
+  login: (input: "") => {},
   logout: () => {},
   isLoading: true,
-  userToken: null,
+  userToken: "1",
 };
 export const AuthContext = createContext<ProviderProps>(InitialContext);
 
 export const AuthProvider = ({ children, ...props }: AuthProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [userToken, setUserToken] = useState<string | null>(null);
+  const [userToken, setUserToken] = useState<string | null>("1");
 
   const [verifyState, setVerifyState] = useState<any>();
 
@@ -36,10 +36,11 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
   //asdfefe is access
   //iwueyiwuye is refresh
 
-  const login = async () => {
-    setUserToken("asdfqwefsdvczsdf");
+  const login = async (input: string) => {
+    console.log("input", input);
+    setUserToken(input);
     // AsyncStorage.setItem("userToken", userToken as string);
-    AsyncStorage.setItem("userToken", "asdfqwefsdvczsdf");
+    AsyncStorage.setItem("userToken", input);
     setIsLoading(false);
     // console.log("jwt", data.login.accessToken);
   };

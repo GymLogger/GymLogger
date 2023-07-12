@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Props, RootStackParamList } from "../types";
@@ -6,6 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { AuthContext } from "../src/context/AuthContext";
 import { useByeQuery, useLoginMutation } from "../src/generated/graphql";
 import { setAccessToken } from "../src/accessToken";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ route, navigation }: Props) => {
   const { navigate } = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -17,6 +18,14 @@ const Login = ({ route, navigation }: Props) => {
   if (error) {
     console.log("error: ", error);
   }
+
+  const [testToken, setTestToken] = useState(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem("userToken").then((x) =>
+      console.log("userToken from async: ", x)
+    );
+  }, []);
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>This is a Login Screen</Text>
@@ -32,7 +41,7 @@ const Login = ({ route, navigation }: Props) => {
 
           if (response && response.data) {
             setAccessToken(response.data.login.accessToken);
-            login();
+            login(response.data.login.accessToken);
           }
         }}
       >
