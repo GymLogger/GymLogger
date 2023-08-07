@@ -13,7 +13,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "mutation Login($email: String!, $password: String!) {\n  login(password: $email, email: $password) {\n    accessToken\n    errors {\n      field\n      message\n    }\n  }\n}": types.LoginDocument,
+    "mutation Login($email: String!, $password: String!) {\n  login(email: $email, password: $password) {\n    accessToken\n    errors {\n      field\n      message\n    }\n  }\n}": types.LoginDocument,
+    "mutation Logout {\n  logout\n}": types.LogoutDocument,
     "mutation Register($email: String!, $password: String!) {\n  register(password: $password, email: $email) {\n    accessToken\n    errors {\n      field\n      message\n    }\n  }\n}": types.RegisterDocument,
     "query Bye {\n  bye\n}": types.ByeDocument,
     "query GetUsers {\n  getUsers {\n    id\n    email\n  }\n}": types.GetUsersDocument,
@@ -36,7 +37,11 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation Login($email: String!, $password: String!) {\n  login(password: $email, email: $password) {\n    accessToken\n    errors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation Login($email: String!, $password: String!) {\n  login(password: $email, email: $password) {\n    accessToken\n    errors {\n      field\n      message\n    }\n  }\n}"];
+export function graphql(source: "mutation Login($email: String!, $password: String!) {\n  login(email: $email, password: $password) {\n    accessToken\n    errors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation Login($email: String!, $password: String!) {\n  login(email: $email, password: $password) {\n    accessToken\n    errors {\n      field\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation Logout {\n  logout\n}"): (typeof documents)["mutation Logout {\n  logout\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

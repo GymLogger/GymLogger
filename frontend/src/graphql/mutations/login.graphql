@@ -1,5 +1,5 @@
 mutation Login($email: String!, $password: String!) {
-  login(password: $email, email: $password) {
+  login(email: $email, password: $password) {
     accessToken
     errors {
       field

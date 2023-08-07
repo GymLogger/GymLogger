@@ -58,6 +58,7 @@ export class UserResolver {
     const authorization = context.req.headers["authorization"];
 
     if (!authorization) {
+      console.log("context.req.headers", context.req.headers);
       console.log("no auth found");
       return null;
     }

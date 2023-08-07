@@ -2,7 +2,7 @@ import React, { createContext, ReactNode, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { decode } from "react-native-pure-jwt";
-import { useLoginMutation } from "../generated/graphql";
+import { useLoginMutation, useLogoutMutation } from "../generated/graphql";
 
 interface AuthProps {
   children?: ReactNode;
@@ -30,6 +30,8 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
 
   const [verifyState, setVerifyState] = useState<any>();
 
+  const [logoutApollo] = useLogoutMutation();
+
   // const { data } = useLoginQuery({
   //   variables: { email: "Colin1", password: "Colin1" },
   // });
@@ -42,6 +44,7 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
     setUserToken(input);
     // AsyncStorage.setItem("userToken", userToken as string);
     AsyncStorage.setItem("userToken", input);
+    logoutApollo();
     setIsLoading(false);
     // console.log("jwt", data.login.accessToken);
   };
