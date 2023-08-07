@@ -58,7 +58,12 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
     try {
       setIsLoading(true);
       const userToken = await AsyncStorage.getItem("userToken");
-      setUserToken(userToken);
+      //just added this
+      if (!userToken) {
+        setUserToken("");
+      } else {
+        setUserToken(userToken);
+      }
       setIsLoading(false);
     } catch (error) {
       console.log(error);

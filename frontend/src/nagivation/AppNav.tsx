@@ -50,11 +50,8 @@ export const AppNav = () => {
     </>
   );
 
-  // return (
-  //   <Stack.Navigator>{!userToken ? loggedIn : notLoggedIn}</Stack.Navigator>
-  // );
-
   return loading ? (
+    //TODO add loading placeholder
     <Text>hiasdfasdfasdf</Text>
   ) : (
     <Stack.Navigator>{!userToken ? loggedIn : notLoggedIn}</Stack.Navigator>
