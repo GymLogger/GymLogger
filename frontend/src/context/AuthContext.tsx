@@ -15,6 +15,7 @@ interface ProviderProps {
   userToken: string | null;
 }
 
+//TODO - fix this hack
 const InitialContext: ProviderProps = {
   login: (input: "") => {},
   logout: () => {},
