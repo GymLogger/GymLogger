@@ -39,8 +39,8 @@ export class User extends BaseEntity {
     onUpdate: "CASCADE",
     eager: true,
   })
-  workouts!: Workout[];
+  workouts!: Workout[]; //one user has many workouts
 
   @Column("int", { default: 0 })
-  tokenVersion: number;
+  tokenVersion: number; //incremented on token revoke
 }

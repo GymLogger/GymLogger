@@ -19,14 +19,23 @@ import { sendRefreshToken } from "../sendRefreshToken";
 import { validateRegister } from "../utils/validateRegister";
 import { verify } from "jsonwebtoken";
 
+/**
+ * Class for errors in resolver queries or mutations.
+ * Exposed in type-graphql. Will contain a field and a message
+ */
 @ObjectType()
 export class FieldError {
   @Field()
-  field: string;
+  field: string; //error type, ie password, email, etc
 
   @Field()
-  message: string;
+  message: string; // short error description
 }
+/**
+ * Class describing a response to a login. Exposed in type-graphql
+ * Will contain an accessToken - if successful login attempt - or
+ * an array of field errors describing the issue
+ */
 @ObjectType()
 class LoginResponse {
   @Field(() => String, { nullable: true })
@@ -44,29 +53,39 @@ class LoginResponse {
 //   @Field(() => [FieldError], { nullable: true })
 //   errors?: FieldError[];
 // }
+
+/**
+ * User resolvers. Used in graphql to make queries and mutations
+ * on User objects
+ */
 @Resolver(User)
 export class UserResolver {
+  //test resolver
   @Query(() => String)
   hello() {
     return "hello world";
   }
 
+  //TODO kill this, it shouldn't exist. Dev only
+  //Returns all users
   @Query(() => [User])
   getUsers() {
     return User.find();
   }
 
+  /**
+   *
+   * @param Ctx() is the context, passes in the payload which is set from the
+   * isAuth middleware
+   * @returns a user with a matching userId as the payload
+   */
   @Query(() => User, { nullable: true })
-  @UseMiddleware(isAuth) //TODO shoudl this be here?
+  @UseMiddleware(isAuth) //runs isAuth middleware before function is called
   me(@Ctx() { payload }: Context) {
-    // return `your user id is ${payload!.userId}`;
-    // if (!payload?.userId) {
-    //   return null;
-    // }
-    console.log("calling bye with payload: ", payload);
     return User.findOne({ where: { id: payload?.userId } });
   }
 
+  //TODO this shoudl work now maybe? not really needed though, it's just isAuth reskinned
   @Query(() => User, { nullable: true })
   meHeader(@Ctx() context: Context) {
     const authorization = context.req.headers["authorization"];
@@ -89,7 +108,7 @@ export class UserResolver {
       const token = authorization.split(" ")[1];
       console.log("context.req.headers", context.req.headers);
 
-      const payload: any = verify(token, "iwueyiwuye");
+      const payload: any = verify(token, "asdfefe");
       // return User.findOne(payload.userId);
       return User.findOne({ where: { id: payload.userId } });
     } catch (err) {
@@ -106,6 +125,11 @@ export class UserResolver {
     }
   }
 
+  /**
+   *
+   * @param Ctx() is the paramater, uses the response
+   * @returns true, after sending an empty refresh token.
+   */
   @Mutation(() => Boolean)
   async logout(@Ctx() { res }: Context) {
     sendRefreshToken(res, "");
@@ -113,7 +137,11 @@ export class UserResolver {
     return true;
   }
 
-  //TODO - make this less hacky
+  /**
+   * Revokes a refresh token by incrementing the current token version
+   * @param userId Passes in a userId to increment their token
+   * @returns false if no user found, else true
+   */
   @Mutation(() => Boolean)
   async revokeRefreshTokensForUser(@Arg("userId", () => Int) userId: number) {
     const user = await User.findOne({ where: { id: userId } });
@@ -123,6 +151,7 @@ export class UserResolver {
 
     const currTokenVersion = user.tokenVersion;
 
+    //increments the token version for that user by 1
     await dataSource
       .createQueryBuilder()
       .update(User)
@@ -133,14 +162,20 @@ export class UserResolver {
     return true;
   }
 
+  /**
+   * Logs a uer in.
+   * @param email user's email
+   * @param password user's pw
+   * @param Ctx(), the session context containing the response
+   * @returns
+   */
   @Mutation(() => LoginResponse)
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Ctx() { res }: Context
   ): Promise<LoginResponse> {
-    console.log("in login function");
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email } }); //finds user by email
     if (!user) {
       console.log("!user");
       return {
@@ -153,7 +188,7 @@ export class UserResolver {
       };
     }
 
-    const valid = await compare(password, user.password);
+    const valid = await compare(password, user.password); //compares pw with hashed pw
 
     if (!valid) {
       console.log("!valid");
@@ -178,21 +213,29 @@ export class UserResolver {
     };
   }
 
+  /**
+   *
+   * @param email email passed in
+   * @param password pw passed in
+   * @param Ctx() containing the response
+   * @returns
+   */
   @Mutation(() => LoginResponse)
   async register(
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Ctx() { res }: Context
   ): Promise<LoginResponse> {
-    const errors = validateRegister({ email, password });
+    const errors = validateRegister({ email, password }); //validates email and pw
     if (errors) {
       return { errors };
     }
 
-    const hashedPassword = await hash(password, 12);
-    let user;
+    const hashedPassword = await hash(password, 12); //compares hashed pw and entered pw
+    let user; //typescript woudln't let me declare user in the try block
 
     try {
+      //attempts to insert user into the DB, returns user if no issues
       const result = await dataSource
         .createQueryBuilder()
         .insert()
@@ -206,8 +249,12 @@ export class UserResolver {
       user = result.raw[0];
     } catch (err) {
       console.log(err);
-      //TODO check error code here
-      if (err.code === "23505" || err.detail.includes("already exists")) {
+
+      const DUPLICATE_ERROR_CODE: string = "23505";
+      if (
+        err.code === DUPLICATE_ERROR_CODE ||
+        err.detail.includes("already exists")
+      ) {
         //dupe username error
         return {
           errors: [
@@ -219,9 +266,11 @@ export class UserResolver {
         };
       }
     }
+
+    //sticks a refresh token in the cookie
     sendRefreshToken(res, createRefreshToken(user));
 
-    //access token
+    //access token returned
     return {
       accessToken: createAccessToken(user),
     };

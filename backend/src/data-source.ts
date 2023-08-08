@@ -5,6 +5,9 @@ import { Workout } from "./entities/Workout";
 import { Set } from "./entities/Set";
 // import path from "path";
 
+/**
+ * Contains the connection options for the postgres DB
+ */
 export const dataSource = new DataSource({
   type: "postgres",
   port: 5432,
