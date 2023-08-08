@@ -35,6 +35,15 @@ class LoginResponse {
   @Field(() => [FieldError], { nullable: true })
   errors?: FieldError[];
 }
+
+// @ObjectType()
+// class MeResponse {
+//   @Field(() => User, { nullable: true })
+//   user?: User;
+
+//   @Field(() => [FieldError], { nullable: true })
+//   errors?: FieldError[];
+// }
 @Resolver(User)
 export class UserResolver {
   @Query(() => String)
@@ -60,16 +69,35 @@ export class UserResolver {
     if (!authorization) {
       console.log("context.req.headers", context.req.headers);
       console.log("no auth found");
-      return null;
+      return;
+      // return {
+      //   errors: [
+      //     {
+      //       field: "me",
+      //       message: "no auth header found",
+      //     },
+      //   ],
+      // };
     }
 
     try {
       const token = authorization.split(" ")[1];
-      const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
-      return User.findOne(payload.userId);
+      console.log("context.req.headers", context.req.headers);
+
+      const payload: any = verify(token, "iwueyiwuye");
+      // return User.findOne(payload.userId);
+      return User.findOne({ where: { id: payload.userId } });
     } catch (err) {
       console.log(err);
       return null;
+      // return {
+      //   errors: [
+      //     {
+      //       field: "me",
+      //       message: "verify didn't work",
+      //     },
+      //   ],
+      // };
     }
   }
 

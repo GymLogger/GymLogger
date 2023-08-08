@@ -2,7 +2,12 @@ import React, { createContext, ReactNode, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { decode } from "react-native-pure-jwt";
-import { useLoginMutation, useLogoutMutation } from "../generated/graphql";
+import {
+  useByeQuery,
+  useLoginMutation,
+  useLogoutMutation,
+} from "../generated/graphql";
+import { useApolloClient } from "@apollo/client";
 
 interface AuthProps {
   children?: ReactNode;
@@ -30,6 +35,7 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
 
   const [verifyState, setVerifyState] = useState<any>();
 
+  const apollo = useApolloClient();
   const [logoutApollo] = useLogoutMutation();
 
   // const { data } = useLoginQuery({
@@ -44,7 +50,6 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
     setUserToken(input);
     // AsyncStorage.setItem("userToken", userToken as string);
     AsyncStorage.setItem("userToken", input);
-    logoutApollo();
     setIsLoading(false);
     // console.log("jwt", data.login.accessToken);
   };
@@ -53,6 +58,9 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
     setIsLoading(true);
     setUserToken(null);
     AsyncStorage.removeItem("userToken");
+    logoutApollo();
+    //TODO is this await??
+    apollo.resetStore();
     setIsLoading(false);
     // console.log("jwt", data.login.accessToken);
   };
