@@ -25,7 +25,7 @@ const InitialContext: ProviderProps = {
   login: (input: "") => {},
   logout: () => {},
   isLoading: true,
-  userToken: "1",
+  userToken: "1", //hack b/c userToken apparently cant be null
 };
 export const AuthContext = createContext<ProviderProps>(InitialContext);
 
@@ -37,10 +37,6 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
 
   const apollo = useApolloClient();
   const [logoutApollo] = useLogoutMutation();
-
-  // const { data } = useLoginQuery({
-  //   variables: { email: "Colin1", password: "Colin1" },
-  // });
 
   //asdfefe is access
   //iwueyiwuye is refresh
@@ -65,6 +61,11 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
     // console.log("jwt", data.login.accessToken);
   };
 
+  /**
+   * function that checks if a user is logged in.
+   * sets loading variable to true while checking.
+   * Checks AysncStorage for the value for key "userToken"
+   */
   const isLoggedIn = async () => {
     try {
       setIsLoading(true);
@@ -81,10 +82,13 @@ export const AuthProvider = ({ children, ...props }: AuthProps) => {
     }
   };
 
+  //Checks if a user is logged in when the page loads.
   useEffect(() => {
     isLoggedIn();
   }, []);
   return (
+    //AuthContext will provide its values to every other child component.
+    //In our case, it will provide it to everything that *isn't* the ApolloClientProvider
     <AuthContext.Provider value={{ login, logout, isLoading, userToken }}>
       {children}
     </AuthContext.Provider>

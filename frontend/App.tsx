@@ -19,6 +19,8 @@ import { setContext } from "@apollo/client/link/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAccessToken } from "./src/accessToken";
 
+//creates a stack to navigate
+//TODO is this even needed? From old version?
 const Stack = createStackNavigator<RootStackParamList>();
 
 //create http link based on base url
@@ -27,6 +29,11 @@ const httpLink = createHttpLink({
   // credentials: "include",
 });
 
+/**
+ * calls setContext from Apollo library, not React.
+ * Passes in the headers. Gets the access token from local storage
+ * and attaches it to any headers headed to Apollo.
+ */
 const authLink = setContext(async (_, { headers }) => {
   // get the authentication token from local storage if it exists
   const token = await getAccessToken();
@@ -54,6 +61,14 @@ const client = new ApolloClient({
   //may need to include credentials
   // credentials:'include'
 });
+
+/**
+ * This is the entire application. The apollo provider, using the
+ * ApolloClient, wraps the entire application, so it has access to everything.
+ * The AuthProvider has access to everything in the navigation container and wraps it.
+ * NavigationContainer contains the routes and stack of pages.
+ * @returns the application
+ */
 export default function App() {
   return (
     <ApolloProvider client={client}>

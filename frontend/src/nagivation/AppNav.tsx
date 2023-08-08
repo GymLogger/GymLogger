@@ -17,6 +17,11 @@ export const AppNav = () => {
   const [loading, setLoading] = useState(true);
 
   //TODO - move this to AuthContext
+  /**
+   * When the page loads, try to get a refresh token from the route.
+   * After, parse it from the json, set the Access Token in Async Storage
+   * and set loading to false
+   */
   useEffect(() => {
     fetch("http://localhost:4000/refresh_token", {
       credentials: "include",
@@ -37,6 +42,8 @@ export const AppNav = () => {
     );
   }
 
+  //TODO: Replace these with AppStack and AuthStack
+  //List of screens which can be accessed if logged in
   const loggedIn = (
     <>
       <Stack.Screen name="Login" component={Login} />
@@ -44,6 +51,7 @@ export const AppNav = () => {
     </>
   );
 
+  //List of screens which can be accessed if notn logged in
   const notLoggedIn = (
     <>
       <Stack.Screen name="Testing" component={Testing} />
@@ -54,6 +62,7 @@ export const AppNav = () => {
     //TODO add loading placeholder
     <Text>hiasdfasdfasdf</Text>
   ) : (
+    //shows one stack if logged in, another if not
     <Stack.Navigator>{!userToken ? loggedIn : notLoggedIn}</Stack.Navigator>
   );
 };
