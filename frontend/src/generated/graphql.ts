@@ -79,7 +79,7 @@ export type MutationRevokeRefreshTokensForUserArgs = {
 
 export type Query = {
   __typename?: "Query";
-  bye: Scalars["String"]["output"];
+  bye?: Maybe<User>;
   getUsers: Array<User>;
   hello: Scalars["String"]["output"];
   me?: Maybe<User>;
@@ -156,7 +156,10 @@ export type RegisterMutation = {
 
 export type ByeQueryVariables = Exact<{ [key: string]: never }>;
 
-export type ByeQuery = { __typename?: "Query"; bye: string };
+export type ByeQuery = {
+  __typename?: "Query";
+  bye?: { __typename?: "User"; id: number } | null;
+};
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never }>;
 
@@ -328,7 +331,9 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<
 >;
 export const ByeDocument = gql`
   query Bye {
-    bye
+    bye {
+      id
+    }
   }
 `;
 

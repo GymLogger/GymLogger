@@ -20,7 +20,7 @@ export const isAuth: MiddlewareFn<Context> = ({ context }, next) => {
     const payload = verify(token, "asdfefe"); //payload is {userId: user.id}
     //stores payload on context
     interface payloadReturn {
-      userId: string;
+      userId: number;
     }
 
     context.payload = payload as payloadReturn;

@@ -20,7 +20,6 @@ const Testing = ({ route, navigation }: Props) => {
   const { navigate } = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const { logout } = useContext(AuthContext);
-  const { data: dataBye } = useByeQuery();
 
   useEffect(() => {
     if (data) {
@@ -43,10 +42,9 @@ const Testing = ({ route, navigation }: Props) => {
       <TouchableOpacity onPress={() => logout()}>
         <Text>Move back Signup Screen and log out</Text>
       </TouchableOpacity>
-      {/* <Text>
-        {!!dataMe.me ? <Text>{dataMe.me.id}</Text> : <Text>no ID</Text>}
-      </Text> */}
-      {dataBye ? <Text>{dataBye.bye}</Text> : <Text>noBye</Text>}
+      <Text>
+        {dataMe ? <Text>user id is: {dataMe.me.id}</Text> : <Text>no ID</Text>}
+      </Text>
     </ScrollView>
   );
 };

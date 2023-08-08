@@ -56,14 +56,19 @@ export class UserResolver {
     return User.find();
   }
 
-  @Query(() => String)
-  @UseMiddleware(isAuth)
-  bye(@Ctx() { payload }: Context) {
-    return `your user id is ${payload!.userId}`;
+  @Query(() => User, { nullable: true })
+  @UseMiddleware(isAuth) //TODO shoudl this be here?
+  me(@Ctx() { payload }: Context) {
+    // return `your user id is ${payload!.userId}`;
+    // if (!payload?.userId) {
+    //   return null;
+    // }
+    console.log("calling bye with payload: ", payload);
+    return User.findOne({ where: { id: payload?.userId } });
   }
 
   @Query(() => User, { nullable: true })
-  me(@Ctx() context: Context) {
+  meHeader(@Ctx() context: Context) {
     const authorization = context.req.headers["authorization"];
 
     if (!authorization) {

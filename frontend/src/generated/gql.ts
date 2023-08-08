@@ -16,7 +16,7 @@ const documents = {
     "mutation Login($email: String!, $password: String!) {\n  login(email: $email, password: $password) {\n    accessToken\n    errors {\n      field\n      message\n    }\n  }\n}": types.LoginDocument,
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
     "mutation Register($email: String!, $password: String!) {\n  register(password: $password, email: $email) {\n    accessToken\n    errors {\n      field\n      message\n    }\n  }\n}": types.RegisterDocument,
-    "query Bye {\n  bye\n}": types.ByeDocument,
+    "query Bye {\n  bye {\n    id\n  }\n}": types.ByeDocument,
     "query GetUsers {\n  getUsers {\n    id\n    email\n  }\n}": types.GetUsersDocument,
     "query Me {\n  me {\n    id\n    email\n    createdAt\n    updatedAt\n  }\n}": types.MeDocument,
 };
@@ -50,7 +50,7 @@ export function graphql(source: "mutation Register($email: String!, $password: S
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Bye {\n  bye\n}"): (typeof documents)["query Bye {\n  bye\n}"];
+export function graphql(source: "query Bye {\n  bye {\n    id\n  }\n}"): (typeof documents)["query Bye {\n  bye {\n    id\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
