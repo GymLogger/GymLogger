@@ -96,6 +96,7 @@ export class UserResolver {
   me(@Ctx() context: Context) {
     const authorization = context.req.headers["authorization"];
 
+
     if (!authorization) {
       console.log("no auth found");
       return null;
@@ -243,6 +244,7 @@ export class UserResolver {
       console.log(err);
 
       const DUPLICATE_ERROR_CODE: string = "23505"; //postgres error code for already exsting user
+
       if (
         err.code === DUPLICATE_ERROR_CODE ||
         err.detail.includes("already exists")

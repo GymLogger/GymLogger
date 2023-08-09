@@ -17,6 +17,7 @@ import {
   useLoginMutation,
   useRegisterMutation,
 } from "../src/generated/graphql";
+
 import { setAccessToken } from "../src/accessToken";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -26,6 +27,7 @@ const Login = ({ route, navigation }: Props) => {
 
   const [loginApollo] = useLoginMutation();
   const [register] = useRegisterMutation();
+
 
   const [testToken, setTestToken] = useState(null);
 
@@ -77,6 +79,7 @@ const Login = ({ route, navigation }: Props) => {
 
               //if response exists and the data exists, set the access token and use the
               //login() function from AuthContext
+
               if (response && response.data) {
                 setAccessToken(response.data.login.accessToken);
                 login(response.data.login.accessToken);
@@ -107,6 +110,7 @@ const Login = ({ route, navigation }: Props) => {
             }}
           />
         </View>
+
         <TouchableOpacity
           onPress={async () => {
             const response = await loginApollo({
@@ -120,6 +124,7 @@ const Login = ({ route, navigation }: Props) => {
             }
           }}
         ></TouchableOpacity>
+
         {/* {!loading && !!data && <Text>{data.bye}</Text>} */}
       </View>
     </>
