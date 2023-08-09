@@ -1,5 +1,5 @@
-query MeHeader {
-  meHeader {
+query MeAuth {
+  meAuth {
     id
     email
     createdAt

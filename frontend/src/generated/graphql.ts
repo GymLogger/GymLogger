@@ -82,8 +82,7 @@ export type Query = {
   getUsers: Array<User>;
   hello: Scalars["String"]["output"];
   me?: Maybe<User>;
-  me2?: Maybe<User>;
-  meHeader?: Maybe<User>;
+  meAuth?: Maybe<User>;
 };
 
 export type Set = {
@@ -175,24 +174,11 @@ export type MeQuery = {
   } | null;
 };
 
-export type Me2QueryVariables = Exact<{ [key: string]: never }>;
+export type MeAuthQueryVariables = Exact<{ [key: string]: never }>;
 
-export type Me2Query = {
+export type MeAuthQuery = {
   __typename?: "Query";
-  me2?: {
-    __typename?: "User";
-    id: number;
-    email: string;
-    createdAt: string;
-    updatedAt: string;
-  } | null;
-};
-
-export type MeHeaderQueryVariables = Exact<{ [key: string]: never }>;
-
-export type MeHeaderQuery = {
-  __typename?: "Query";
-  meHeader?: {
+  meAuth?: {
     __typename?: "User";
     id: number;
     email: string;
@@ -443,9 +429,9 @@ export function useMeLazyQuery(
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
-export const Me2Document = gql`
-  query Me2 {
-    me2 {
+export const MeAuthDocument = gql`
+  query MeAuth {
+    meAuth {
       id
       email
       createdAt
@@ -455,87 +441,41 @@ export const Me2Document = gql`
 `;
 
 /**
- * __useMe2Query__
+ * __useMeAuthQuery__
  *
- * To run a query within a React component, call `useMe2Query` and pass it any options that fit your needs.
- * When your component renders, `useMe2Query` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMeAuthQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeAuthQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useMe2Query({
+ * const { data, loading, error } = useMeAuthQuery({
  *   variables: {
  *   },
  * });
  */
-export function useMe2Query(
-  baseOptions?: Apollo.QueryHookOptions<Me2Query, Me2QueryVariables>
+export function useMeAuthQuery(
+  baseOptions?: Apollo.QueryHookOptions<MeAuthQuery, MeAuthQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<Me2Query, Me2QueryVariables>(Me2Document, options);
-}
-export function useMe2LazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<Me2Query, Me2QueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<Me2Query, Me2QueryVariables>(Me2Document, options);
-}
-export type Me2QueryHookResult = ReturnType<typeof useMe2Query>;
-export type Me2LazyQueryHookResult = ReturnType<typeof useMe2LazyQuery>;
-export type Me2QueryResult = Apollo.QueryResult<Me2Query, Me2QueryVariables>;
-export const MeHeaderDocument = gql`
-  query MeHeader {
-    meHeader {
-      id
-      email
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-/**
- * __useMeHeaderQuery__
- *
- * To run a query within a React component, call `useMeHeaderQuery` and pass it any options that fit your needs.
- * When your component renders, `useMeHeaderQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMeHeaderQuery({
- *   variables: {
- *   },
- * });
- */
-export function useMeHeaderQuery(
-  baseOptions?: Apollo.QueryHookOptions<MeHeaderQuery, MeHeaderQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MeHeaderQuery, MeHeaderQueryVariables>(
-    MeHeaderDocument,
+  return Apollo.useQuery<MeAuthQuery, MeAuthQueryVariables>(
+    MeAuthDocument,
     options
   );
 }
-export function useMeHeaderLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    MeHeaderQuery,
-    MeHeaderQueryVariables
-  >
+export function useMeAuthLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<MeAuthQuery, MeAuthQueryVariables>
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MeHeaderQuery, MeHeaderQueryVariables>(
-    MeHeaderDocument,
+  return Apollo.useLazyQuery<MeAuthQuery, MeAuthQueryVariables>(
+    MeAuthDocument,
     options
   );
 }
-export type MeHeaderQueryHookResult = ReturnType<typeof useMeHeaderQuery>;
-export type MeHeaderLazyQueryHookResult = ReturnType<
-  typeof useMeHeaderLazyQuery
->;
-export type MeHeaderQueryResult = Apollo.QueryResult<
-  MeHeaderQuery,
-  MeHeaderQueryVariables
+export type MeAuthQueryHookResult = ReturnType<typeof useMeAuthQuery>;
+export type MeAuthLazyQueryHookResult = ReturnType<typeof useMeAuthLazyQuery>;
+export type MeAuthQueryResult = Apollo.QueryResult<
+  MeAuthQuery,
+  MeAuthQueryVariables
 >;

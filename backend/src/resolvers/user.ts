@@ -81,20 +81,12 @@ export class UserResolver {
    */
   @Query(() => User, { nullable: true })
   @UseMiddleware(isAuth) //runs isAuth middleware before function is called
-  me(@Ctx() { payload }: Context) {
+  meAuth(@Ctx() { payload }: Context) {
     return User.findOne({ where: { id: payload?.userId } });
   }
 
-  //for testing only, things are being weird
   @Query(() => User, { nullable: true })
-  @UseMiddleware(isAuth) //runs isAuth middleware before function is called
-  me2(@Ctx() { payload }: Context) {
-    return User.findOne({ where: { id: payload?.userId } });
-  }
-
-  //TODO this shoudl work now maybe? not really needed though, it's just isAuth reskinned
-  @Query(() => User, { nullable: true })
-  meHeader(@Ctx() context: Context) {
+  me(@Ctx() context: Context) {
     const authorization = context.req.headers["authorization"];
     console.log("From meHeader, context.req.headers", context.req.headers);
 

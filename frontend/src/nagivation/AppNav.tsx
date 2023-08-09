@@ -9,6 +9,7 @@ import Testing from "../../Screens/Testing";
 import { RootStackParamList } from "../../types";
 import { setAccessToken } from "../accessToken";
 import { AuthContext } from "../context/AuthContext";
+import AppStack from "./AppStack";
 
 export const AppNav = () => {
   const { isLoading, userToken } = useContext(AuthContext);
@@ -22,17 +23,17 @@ export const AppNav = () => {
    * After, parse it from the json, set the Access Token in Async Storage
    * and set loading to false
    */
-  useEffect(() => {
-    fetch("http://localhost:4000/refresh_token", {
-      credentials: "include",
-      method: "POST",
-    }).then(async (x) => {
-      const { accessToken } = await x.json();
-      setAccessToken(accessToken);
-      console.log("data in useEffect for Refresh: ", accessToken);
-      setLoading(false);
-    });
-  }, []);
+  // useEffect(() => {
+  //   fetch("http://localhost:4000/refresh_token", {
+  //     credentials: "include",
+  //     method: "POST",
+  //   }).then(async (x) => {
+  //     const { accessToken } = await x.json();
+  //     setAccessToken(accessToken);
+  //     console.log("data in useEffect for Refresh: ", accessToken);
+  //     setLoading(false);
+  //   });
+  // }, []);
 
   if (isLoading) {
     return (
@@ -58,10 +59,7 @@ export const AppNav = () => {
     </>
   );
 
-  return loading ? (
-    //TODO add loading placeholder
-    <Text>hiasdfasdfasdf</Text>
-  ) : (
+  return (
     //shows one stack if logged in, another if not
     <Stack.Navigator>{!userToken ? loggedIn : notLoggedIn}</Stack.Navigator>
   );
