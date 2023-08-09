@@ -2,11 +2,7 @@ import React, { createContext, ReactNode, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { decode } from "react-native-pure-jwt";
-import {
-  useByeQuery,
-  useLoginMutation,
-  useLogoutMutation,
-} from "../generated/graphql";
+import { useLoginMutation, useLogoutMutation } from "../generated/graphql";
 import { useApolloClient } from "@apollo/client";
 
 interface AuthProps {

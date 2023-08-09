@@ -1,6 +1,12 @@
 import { EmailPasswordInput } from "../EmailPasswordInput";
 
+/**
+ * Basic validation for email and password.
+ * @param options Passes in an EmailPasswordInput, both of which are strings
+ * @returns an error if applicable
+ */
 export const validateRegister = (options: EmailPasswordInput) => {
+  //TODO make better validation rules or use an external library
   if (!options.email.includes("@")) {
     return [
       {

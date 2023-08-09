@@ -13,20 +13,16 @@ import { useNavigation } from "@react-navigation/native";
 import { Props, RootStackParamList } from "../types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AuthContext } from "../src/context/AuthContext";
-import { useByeQuery, useLoginMutation } from "../src/generated/graphql";
+import { useLoginMutation } from "../src/generated/graphql";
 import { setAccessToken } from "../src/accessToken";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ route, navigation }: Props) => {
   const { navigate } = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { login } = useContext(AuthContext);
-  const { data, error } = useByeQuery();
 
   const [loginApollo] = useLoginMutation();
   // console.log("data: ", data);
-  if (error) {
-    console.log("error: ", error);
-  }
 
   const [testToken, setTestToken] = useState(null);
 

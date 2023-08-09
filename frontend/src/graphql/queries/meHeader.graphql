@@ -1,0 +1,8 @@
+query MeHeader {
+  meHeader {
+    id
+    email
+    createdAt
+    updatedAt
+  }
+}

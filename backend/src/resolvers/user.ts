@@ -85,43 +85,35 @@ export class UserResolver {
     return User.findOne({ where: { id: payload?.userId } });
   }
 
+  //for testing only, things are being weird
+  @Query(() => User, { nullable: true })
+  @UseMiddleware(isAuth) //runs isAuth middleware before function is called
+  me2(@Ctx() { payload }: Context) {
+    return User.findOne({ where: { id: payload?.userId } });
+  }
+
   //TODO this shoudl work now maybe? not really needed though, it's just isAuth reskinned
   @Query(() => User, { nullable: true })
   meHeader(@Ctx() context: Context) {
     const authorization = context.req.headers["authorization"];
+    console.log("From meHeader, context.req.headers", context.req.headers);
 
     if (!authorization) {
-      console.log("context.req.headers", context.req.headers);
       console.log("no auth found");
-      return;
-      // return {
-      //   errors: [
-      //     {
-      //       field: "me",
-      //       message: "no auth header found",
-      //     },
-      //   ],
-      // };
+      return null;
     }
 
     try {
       const token = authorization.split(" ")[1];
       console.log("context.req.headers", context.req.headers);
 
+      //TODO use env variables
       const payload: any = verify(token, "asdfefe");
       // return User.findOne(payload.userId);
       return User.findOne({ where: { id: payload.userId } });
     } catch (err) {
       console.log(err);
       return null;
-      // return {
-      //   errors: [
-      //     {
-      //       field: "me",
-      //       message: "verify didn't work",
-      //     },
-      //   ],
-      // };
     }
   }
 
@@ -131,7 +123,7 @@ export class UserResolver {
    * @returns true, after sending an empty refresh token.
    */
   @Mutation(() => Boolean)
-  async logout(@Ctx() { res }: Context) {
+  async logout(@Ctx() { res }: Context): Promise<boolean> {
     sendRefreshToken(res, "");
 
     return true;
@@ -143,7 +135,9 @@ export class UserResolver {
    * @returns false if no user found, else true
    */
   @Mutation(() => Boolean)
-  async revokeRefreshTokensForUser(@Arg("userId", () => Int) userId: number) {
+  async revokeRefreshTokensForUser(
+    @Arg("userId", () => Int) userId: number
+  ): Promise<boolean> {
     const user = await User.findOne({ where: { id: userId } });
     if (!user) {
       return false;

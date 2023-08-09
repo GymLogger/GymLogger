@@ -15,7 +15,7 @@ import { Exercise } from "./Exercise";
 export class Set extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: number; //automatically generated unique set id
 
   @Field()
   @Column()
@@ -35,5 +35,5 @@ export class Set extends BaseEntity {
 
   @Field(() => [Exercise])
   @ManyToOne(() => Exercise, (exercise) => exercise.sets)
-  exercise!: Exercise;
+  exercise!: Exercise; //one set has many exercises
 }
