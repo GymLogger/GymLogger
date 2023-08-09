@@ -17,6 +17,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 const main = async () => {
+  //connects to the postgres DB
   dataSource
     .initialize()
     .then(() => {
@@ -26,8 +27,8 @@ const main = async () => {
       console.log("data source initialization error occurred: ", err);
     });
 
-  const app = express();
-  app.use(cookieParser());
+  const app = express(); //creating the express server
+  app.use(cookieParser()); //using cookie parser middleware to make reading cookies easier
 
   app.get("/", (_, res) => {
     res.send("API working");
@@ -64,9 +65,12 @@ const main = async () => {
     }
     //creates a refresh token when access token is also created
     sendRefreshToken(res, createRefreshToken(user));
+
+    //sends the accessToken
     return res.send({ ok: true, accessToken: createAccessToken(user) });
   });
 
+  //express server has an endpoint for /graphql using cors
   app.use(
     "/graphql",
     cors<cors.CorsRequest>({
@@ -75,26 +79,31 @@ const main = async () => {
     })
   );
 
+  //express app listening on port 4000
   app.listen(4000, () => {
     console.log(`🚀 Listening on port 4000`);
   });
 
+  //apollo server declared
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver],
+      resolvers: [UserResolver], //sets resolvers
       validate: false,
     }),
+    //passing in session context
+    //TODO - does payload need to be passed in?
     context: ({ req, res }): Context => ({
       req,
       res,
     }),
-    cache: "bounded",
-    //only for prod
+    cache: "bounded", //security thing
+    //only for prod, remove in dev
+    //TODO fix this with env variables
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
   });
 
   await apolloServer.start();
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app }); //connects express server and apollo server
 };
 
 main().catch((err) => {

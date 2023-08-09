@@ -1,0 +1,8 @@
+query MeAuth {
+  meAuth {
+    id
+    email
+    createdAt
+    updatedAt
+  }
+}

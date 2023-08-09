@@ -15,7 +15,7 @@ import { Workout } from "./Workout";
 export class User extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: number; //automatically generated unique user id
 
   @Field()
   @Column({ unique: true })
@@ -39,8 +39,8 @@ export class User extends BaseEntity {
     onUpdate: "CASCADE",
     eager: true,
   })
-  workouts!: Workout[];
+  workouts!: Workout[]; //one user has many workouts
 
   @Column("int", { default: 0 })
-  tokenVersion: number;
+  tokenVersion: number; //incremented on token revoke, used to check token validity
 }

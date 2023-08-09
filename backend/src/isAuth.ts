@@ -8,7 +8,7 @@ export const isAuth: MiddlewareFn<Context> = ({ context }, next) => {
   // bearer <random looking string>
   const authorization = context.req.headers["authorization"];
 
-  console.log("authorization: ", context.req.headers);
+  console.log("From isAuth, authorization: ", context.req.headers);
 
   if (!authorization) {
     throw new Error("not authenticated");
@@ -20,10 +20,11 @@ export const isAuth: MiddlewareFn<Context> = ({ context }, next) => {
     const payload = verify(token, "asdfefe"); //payload is {userId: user.id}
     //stores payload on context
     interface payloadReturn {
-      userId: string;
+      userId: number;
     }
 
     context.payload = payload as payloadReturn;
+    console.log("payload from isAuth: ", payload);
   } catch (error) {
     console.log(error);
   }

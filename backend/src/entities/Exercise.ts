@@ -12,12 +12,16 @@ import {
 import { Workout } from "./Workout";
 import { Set } from "./Set";
 
+/**
+ * Exercise class with typeorm, exposed in type-graphql
+ * Extends the typeorm Base entity
+ */
 @ObjectType()
 @Entity()
 export class Exercise extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: number; //automatically generated unique exercise id
 
   @Field(() => String)
   @Column()
