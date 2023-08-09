@@ -242,7 +242,7 @@ export class UserResolver {
     } catch (err) {
       console.log(err);
 
-      const DUPLICATE_ERROR_CODE: string = "23505";
+      const DUPLICATE_ERROR_CODE: string = "23505"; //postgres error code for already exsting user
       if (
         err.code === DUPLICATE_ERROR_CODE ||
         err.detail.includes("already exists")

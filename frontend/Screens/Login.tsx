@@ -70,11 +70,13 @@ const Login = ({ route, navigation }: Props) => {
           <Button
             title="Login"
             onPress={async () => {
+              //calls the login mutation on button press, uses variables from state
               const response = await loginApollo({
                 variables: { email: email, password: password },
               });
-              console.log("response: ", response);
 
+              //if response exists and the data exists, set the access token and use the
+              //login() function from AuthContext
               if (response && response.data) {
                 setAccessToken(response.data.login.accessToken);
                 login(response.data.login.accessToken);
@@ -84,15 +86,19 @@ const Login = ({ route, navigation }: Props) => {
           <Button
             title="Register"
             onPress={async () => {
+              //calls register mutation on button press using variables from state
               const response = await register({
                 variables: { email: email, password: password },
               });
-              console.log("register response: ", response);
+
+              //if no errors, and there's a response, and there's response data, try to login
               if (!response.errors && response && response.data) {
                 const loginResponse = await loginApollo({
                   variables: { email: email, password: password },
                 });
-                console.log("loginResponse: ", loginResponse);
+
+                //if response exists and the data exists, set the access token and use the
+                //login() function from AuthContext
                 if (loginResponse && loginResponse.data) {
                   setAccessToken(loginResponse.data.login.accessToken);
                   login(loginResponse.data.login.accessToken);
