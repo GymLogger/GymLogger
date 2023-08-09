@@ -85,10 +85,17 @@ export class UserResolver {
     return User.findOne({ where: { id: payload?.userId } });
   }
 
+  /**
+   * Gets accessToken from header from request. Verifies the token, which contains the
+   * userID. Returns a user with matching userID. Similar logic to isAuth, but
+   * is not middleware. Currently must be called with a fetchPolicy of "network-only"
+   * @param context from session passed in, request used
+   * @returns a User with matching userId as the token passed in
+   */
   @Query(() => User, { nullable: true })
   me(@Ctx() context: Context) {
     const authorization = context.req.headers["authorization"];
-    console.log("From meHeader, context.req.headers", context.req.headers);
+
 
     if (!authorization) {
       console.log("no auth found");
@@ -236,7 +243,8 @@ export class UserResolver {
     } catch (err) {
       console.log(err);
 
-      const DUPLICATE_ERROR_CODE: string = "23505";
+      const DUPLICATE_ERROR_CODE: string = "23505"; //postgres error code for already exsting user
+
       if (
         err.code === DUPLICATE_ERROR_CODE ||
         err.detail.includes("already exists")

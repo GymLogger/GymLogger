@@ -13,7 +13,11 @@ import { useNavigation } from "@react-navigation/native";
 import { Props, RootStackParamList } from "../types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AuthContext } from "../src/context/AuthContext";
-import { useLoginMutation } from "../src/generated/graphql";
+import {
+  useLoginMutation,
+  useRegisterMutation,
+} from "../src/generated/graphql";
+
 import { setAccessToken } from "../src/accessToken";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -22,7 +26,8 @@ const Login = ({ route, navigation }: Props) => {
   const { login } = useContext(AuthContext);
 
   const [loginApollo] = useLoginMutation();
-  // console.log("data: ", data);
+  const [register] = useRegisterMutation();
+
 
   const [testToken, setTestToken] = useState(null);
 
@@ -34,6 +39,7 @@ const Login = ({ route, navigation }: Props) => {
 
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
+
   const styles = StyleSheet.create({
     input: {
       height: 40,
@@ -66,10 +72,13 @@ const Login = ({ route, navigation }: Props) => {
           <Button
             title="Login"
             onPress={async () => {
+              //calls the login mutation on button press, uses variables from state
               const response = await loginApollo({
                 variables: { email: email, password: password },
               });
-              console.log("response: ", response);
+
+              //if response exists and the data exists, set the access token and use the
+              //login() function from AuthContext
 
               if (response && response.data) {
                 setAccessToken(response.data.login.accessToken);
@@ -79,12 +88,29 @@ const Login = ({ route, navigation }: Props) => {
           />
           <Button
             title="Register"
-            onPress={() => Alert.alert("Simple Button pressed")}
+            onPress={async () => {
+              //calls register mutation on button press using variables from state
+              const response = await register({
+                variables: { email: email, password: password },
+              });
+
+              //if no errors, and there's a response, and there's response data, try to login
+              if (!response.errors && response && response.data) {
+                const loginResponse = await loginApollo({
+                  variables: { email: email, password: password },
+                });
+
+                //if response exists and the data exists, set the access token and use the
+                //login() function from AuthContext
+                if (loginResponse && loginResponse.data) {
+                  setAccessToken(loginResponse.data.login.accessToken);
+                  login(loginResponse.data.login.accessToken);
+                }
+              }
+            }}
           />
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-          <Text>Move to Signup Screen</Text>
-        </TouchableOpacity>
+
         <TouchableOpacity
           onPress={async () => {
             const response = await loginApollo({
@@ -97,9 +123,8 @@ const Login = ({ route, navigation }: Props) => {
               login(response.data.login.accessToken);
             }
           }}
-        >
-          <Text>Login</Text>
-        </TouchableOpacity>
+        ></TouchableOpacity>
+
         {/* {!loading && !!data && <Text>{data.bye}</Text>} */}
       </View>
     </>
