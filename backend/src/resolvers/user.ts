@@ -96,7 +96,6 @@ export class UserResolver {
   me(@Ctx() context: Context) {
     const authorization = context.req.headers["authorization"];
 
-
     if (!authorization) {
       console.log("no auth found");
       return null;
@@ -142,7 +141,7 @@ export class UserResolver {
       return false;
     }
 
-    const currTokenVersion = user.tokenVersion;
+    const currTokenVersion: number = user.tokenVersion;
 
     //increments the token version for that user by 1
     await dataSource
