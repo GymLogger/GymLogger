@@ -11,22 +11,14 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
 
   const [workoutName, setWorkoutName] = useState<string>("");
   return (
-    <View>
-      {!loading && data && (
-        <Text>Showing workouts here for {data.me.email}</Text>
-      )}
-
-      <SafeAreaView>
-        <TextInput
-          onChangeText={setWorkoutName}
-          value={workoutName}
-          placeholder="workout"
-        />
-      </SafeAreaView>
-      <NativeBaseProvider>
-        <Box>Hi!</Box>
-      </NativeBaseProvider>
-    </View>
+    <NativeBaseProvider>
+      {!loading && data && <Box>Showing workouts here for {data.me.email}</Box>}
+      <TextInput
+        onChangeText={setWorkoutName}
+        value={workoutName}
+        placeholder="workout"
+      />
+    </NativeBaseProvider>
   );
 };
 

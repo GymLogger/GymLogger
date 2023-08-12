@@ -197,7 +197,6 @@ export default function App() {
     }).then(async (x) => {
       const { accessToken } = await x.json();
       setAccessToken(accessToken);
-      console.log("data in useEffect for Refresh: ", accessToken);
       setLoading(false);
     });
   }, []);
