@@ -153,6 +153,15 @@ export type CreateWorkoutMutation = {
   };
 };
 
+export type DeleteWorkoutMutationVariables = Exact<{
+  workoutId: Scalars["Int"]["input"];
+}>;
+
+export type DeleteWorkoutMutation = {
+  __typename?: "Mutation";
+  deleteWorkout: boolean;
+};
+
 export type LoginMutationVariables = Exact<{
   email: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -308,6 +317,54 @@ export type CreateWorkoutMutationResult =
 export type CreateWorkoutMutationOptions = Apollo.BaseMutationOptions<
   CreateWorkoutMutation,
   CreateWorkoutMutationVariables
+>;
+export const DeleteWorkoutDocument = gql`
+  mutation DeleteWorkout($workoutId: Int!) {
+    deleteWorkout(workoutId: $workoutId)
+  }
+`;
+export type DeleteWorkoutMutationFn = Apollo.MutationFunction<
+  DeleteWorkoutMutation,
+  DeleteWorkoutMutationVariables
+>;
+
+/**
+ * __useDeleteWorkoutMutation__
+ *
+ * To run a mutation, you first call `useDeleteWorkoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteWorkoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteWorkoutMutation, { data, loading, error }] = useDeleteWorkoutMutation({
+ *   variables: {
+ *      workoutId: // value for 'workoutId'
+ *   },
+ * });
+ */
+export function useDeleteWorkoutMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteWorkoutMutation,
+    DeleteWorkoutMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteWorkoutMutation,
+    DeleteWorkoutMutationVariables
+  >(DeleteWorkoutDocument, options);
+}
+export type DeleteWorkoutMutationHookResult = ReturnType<
+  typeof useDeleteWorkoutMutation
+>;
+export type DeleteWorkoutMutationResult =
+  Apollo.MutationResult<DeleteWorkoutMutation>;
+export type DeleteWorkoutMutationOptions = Apollo.BaseMutationOptions<
+  DeleteWorkoutMutation,
+  DeleteWorkoutMutationVariables
 >;
 export const LoginDocument = gql`
   mutation Login($email: String!, $password: String!) {

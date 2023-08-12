@@ -11,7 +11,7 @@ export const isAuth: MiddlewareFn<Context> = ({ context }, next) => {
   console.log("From isAuth, authorization: ", context.req.headers);
 
   if (!authorization) {
-    throw new Error("not authenticated");
+    throw new Error("not authenticated in middleware");
   }
   try {
     const token = authorization.split(" ")[1]; //gets 2nd value after delimited

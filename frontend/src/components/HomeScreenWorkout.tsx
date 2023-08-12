@@ -13,8 +13,8 @@ const HomeScreenWorkout: React.FC<HomeScreenWorkoutProps> = ({
   return (
     <NativeBaseProvider>
       <Divider></Divider>
-      <Box>{name}</Box>
-      <Box>{workoutId}</Box>
+      <Text>workout name: {name}</Text>
+      <Text>workout id: {workoutId}</Text>
     </NativeBaseProvider>
   );
 };

@@ -41,12 +41,12 @@ export class Workout extends BaseEntity {
   @Column({ nullable: true })
   creatorId!: number;
 
-  @Field(() => [Exercise])
+  @Field(() => [Exercise], { nullable: true })
   @OneToMany(() => Exercise, (exercise) => exercise.workout, {
     cascade: true,
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
     eager: true,
   })
-  exercises!: Exercise[];
+  exercises: Exercise[];
 }

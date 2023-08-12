@@ -56,10 +56,7 @@ export class WorkoutResolver {
    */
   @Mutation(() => Workout)
   @UseMiddleware(isAuth)
-  async createWorkout(
-    @Arg("name") name: string,
-    @Ctx() { payload }: Context
-  ): Promise<WorkoutResponse> {
+  async createWorkout(@Arg("name") name: string, @Ctx() { payload }: Context) {
     //for testing
     console.log("IN");
     console.log("payload: ", payload);
@@ -106,7 +103,7 @@ export class WorkoutResolver {
 
     console.log("workout: ", workout);
 
-    return { workout };
+    return workout;
   }
 
   /**
@@ -119,7 +116,10 @@ export class WorkoutResolver {
   async getWorkouts(
     @Ctx() { payload }: Context
   ): Promise<Workout[] | undefined> {
-    return Workout.find({ where: { creatorId: payload?.userId } });
+    return Workout.find({
+      where: { creatorId: payload?.userId },
+      order: { createdAt: "DESC" },
+    });
   }
 
   /**

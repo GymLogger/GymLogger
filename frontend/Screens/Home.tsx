@@ -2,8 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Props } from "../types";
 import {
   useCreateWorkoutMutation,
-  useGetAllWorkoutsQuery,
-  useGetUsersQuery,
   useGetWorkoutsQuery,
   useMeQuery,
 } from "../src/generated/graphql";
@@ -34,10 +32,13 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
   useEffect(() => {
     if (dataWorkouts) {
       setWorkouts(dataWorkouts.getWorkouts);
-      console.log("workouts state variable: ", workouts);
-      console.log("mutation workouts: ", dataWorkouts.getWorkouts);
     }
   }, [dataWorkouts]);
+
+  //will add the current workout to
+  const handleCreateWorkout = (w) => {
+    setWorkouts([...workouts, w]);
+  };
 
   return (
     <NativeBaseProvider>
@@ -57,11 +58,12 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
             const response = await createWorkout({
               variables: { name: workoutName },
               update: (cache) => {
-                cache.evict({ fieldName: "getAllWorkouts" });
+                cache.evict({ fieldName: "getAllWorkouts" }); //TODO don't need this
                 cache.evict({ fieldName: "getWorkouts" });
               },
             });
             console.log("response: ", response);
+            handleCreateWorkout(response.data.createWorkout);
           }}
         >
           create workout
