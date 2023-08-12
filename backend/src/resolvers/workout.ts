@@ -58,7 +58,7 @@ export class WorkoutResolver {
   @UseMiddleware(isAuth)
   async createWorkout(
     @Arg("name") name: string,
-    @Ctx() { req, payload }: Context
+    @Ctx() { payload }: Context
   ): Promise<WorkoutResponse> {
     //for testing
     console.log("IN");
@@ -84,7 +84,7 @@ export class WorkoutResolver {
         ],
       };
     }
-    //all other methods were not returning the id, or overwriting it with subject id
+    //all other methods were not returning the id, or overwriting it with workout id
     //must use repository, manually assign data (cannot use spread operator), then save via repository
     //this is a known issue with typeorm for postgres with multiple tables, many to one, with an updatedDate column
     // as per issues on their github
@@ -96,15 +96,15 @@ export class WorkoutResolver {
       where: { id: payload?.userId },
     });
 
-    console.log("user: ", user[0].id);
-    console.log("got to 92");
-
     let workout = new Workout();
-    console.log("workout: ", workout.workoutId);
 
     workout.name = name;
     workout.creatorId = user[0].id;
+
+    console.log("got to 104");
     workout = await workoutRepository.save(workout);
+
+    console.log("workout: ", workout);
 
     return { workout };
   }
@@ -116,8 +116,10 @@ export class WorkoutResolver {
    */
   @Query(() => [Workout], { nullable: true })
   @UseMiddleware(isAuth)
-  async getWorkouts(@Ctx() { req }: Context): Promise<Workout[] | undefined> {
-    return Workout.find({ where: { creatorId: parseInt(req.session.id) } });
+  async getWorkouts(
+    @Ctx() { payload }: Context
+  ): Promise<Workout[] | undefined> {
+    return Workout.find({ where: { creatorId: payload?.userId } });
   }
 
   /**
@@ -150,5 +152,12 @@ export class WorkoutResolver {
       .execute();
 
     return workout.raw[0];
+  }
+
+  //TODO kill this, it shouldn't exist. dev only
+  //returns all workouts
+  @Query(() => [Workout])
+  getAllWorkouts() {
+    return Workout.find();
   }
 }

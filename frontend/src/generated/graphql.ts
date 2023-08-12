@@ -95,6 +95,7 @@ export type MutationUpdateWorkoutNameArgs = {
 
 export type Query = {
   __typename?: "Query";
+  getAllWorkouts: Array<Workout>;
   getUsers: Array<User>;
   getWorkouts?: Maybe<Array<Workout>>;
   hello: Scalars["String"]["output"];
@@ -192,11 +193,39 @@ export type RegisterMutation = {
   };
 };
 
+export type GetAllWorkoutsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllWorkoutsQuery = {
+  __typename?: "Query";
+  getAllWorkouts: Array<{
+    __typename?: "Workout";
+    workoutId: number;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+    creatorId?: number | null;
+  }>;
+};
+
 export type GetUsersQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetUsersQuery = {
   __typename?: "Query";
   getUsers: Array<{ __typename?: "User"; id: number; email: string }>;
+};
+
+export type GetWorkoutsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetWorkoutsQuery = {
+  __typename?: "Query";
+  getWorkouts?: Array<{
+    __typename?: "Workout";
+    workoutId: number;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+    creatorId?: number | null;
+  }> | null;
 };
 
 export type MeQueryVariables = Exact<{ [key: string]: never }>;
@@ -428,6 +457,67 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<
   RegisterMutation,
   RegisterMutationVariables
 >;
+export const GetAllWorkoutsDocument = gql`
+  query GetAllWorkouts {
+    getAllWorkouts {
+      workoutId
+      name
+      createdAt
+      updatedAt
+      creatorId
+    }
+  }
+`;
+
+/**
+ * __useGetAllWorkoutsQuery__
+ *
+ * To run a query within a React component, call `useGetAllWorkoutsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllWorkoutsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllWorkoutsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllWorkoutsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAllWorkoutsQuery,
+    GetAllWorkoutsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAllWorkoutsQuery, GetAllWorkoutsQueryVariables>(
+    GetAllWorkoutsDocument,
+    options
+  );
+}
+export function useGetAllWorkoutsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllWorkoutsQuery,
+    GetAllWorkoutsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetAllWorkoutsQuery, GetAllWorkoutsQueryVariables>(
+    GetAllWorkoutsDocument,
+    options
+  );
+}
+export type GetAllWorkoutsQueryHookResult = ReturnType<
+  typeof useGetAllWorkoutsQuery
+>;
+export type GetAllWorkoutsLazyQueryHookResult = ReturnType<
+  typeof useGetAllWorkoutsLazyQuery
+>;
+export type GetAllWorkoutsQueryResult = Apollo.QueryResult<
+  GetAllWorkoutsQuery,
+  GetAllWorkoutsQueryVariables
+>;
 export const GetUsersDocument = gql`
   query GetUsers {
     getUsers {
@@ -480,6 +570,65 @@ export type GetUsersLazyQueryHookResult = ReturnType<
 export type GetUsersQueryResult = Apollo.QueryResult<
   GetUsersQuery,
   GetUsersQueryVariables
+>;
+export const GetWorkoutsDocument = gql`
+  query GetWorkouts {
+    getWorkouts {
+      workoutId
+      name
+      createdAt
+      updatedAt
+      creatorId
+    }
+  }
+`;
+
+/**
+ * __useGetWorkoutsQuery__
+ *
+ * To run a query within a React component, call `useGetWorkoutsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkoutsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkoutsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetWorkoutsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetWorkoutsQuery,
+    GetWorkoutsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetWorkoutsQuery, GetWorkoutsQueryVariables>(
+    GetWorkoutsDocument,
+    options
+  );
+}
+export function useGetWorkoutsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetWorkoutsQuery,
+    GetWorkoutsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetWorkoutsQuery, GetWorkoutsQueryVariables>(
+    GetWorkoutsDocument,
+    options
+  );
+}
+export type GetWorkoutsQueryHookResult = ReturnType<typeof useGetWorkoutsQuery>;
+export type GetWorkoutsLazyQueryHookResult = ReturnType<
+  typeof useGetWorkoutsLazyQuery
+>;
+export type GetWorkoutsQueryResult = Apollo.QueryResult<
+  GetWorkoutsQuery,
+  GetWorkoutsQueryVariables
 >;
 export const MeDocument = gql`
   query Me {
