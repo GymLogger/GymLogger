@@ -15,6 +15,7 @@ import { createAccessToken, createRefreshToken } from "./auth";
 import { sendRefreshToken } from "./sendRefreshToken";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { WorkoutResolver } from "./resolvers/workout";
 
 const main = async () => {
   //connects to the postgres DB
@@ -87,7 +88,7 @@ const main = async () => {
   //apollo server declared
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver], //sets resolvers
+      resolvers: [UserResolver, WorkoutResolver], //sets resolvers
       validate: false,
     }),
     //passing in session context

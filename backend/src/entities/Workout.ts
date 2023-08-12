@@ -31,9 +31,15 @@ export class Workout extends BaseEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
+  //TODO probably don't need both of these
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.workouts)
   creator!: User;
+
+  //TODO probably don't need both of these
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  creatorId!: number;
 
   @Field(() => [Exercise])
   @OneToMany(() => Exercise, (exercise) => exercise.workout, {

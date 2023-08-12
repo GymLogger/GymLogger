@@ -10,6 +10,7 @@ import { RootStackParamList } from "../../types";
 import { setAccessToken } from "../accessToken";
 import { AuthContext } from "../context/AuthContext";
 import AppStack from "./AppStack";
+import Home from "../../Screens/Home";
 
 export const AppNav = () => {
   const { isLoading, userToken } = useContext(AuthContext);
@@ -45,7 +46,7 @@ export const AppNav = () => {
 
   //TODO: Replace these with AppStack and AuthStack
   //List of screens which can be accessed if logged in
-  const loggedIn = (
+  const notLoggedIn = (
     <>
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={Signup} />
@@ -53,14 +54,15 @@ export const AppNav = () => {
   );
 
   //List of screens which can be accessed if notn logged in
-  const notLoggedIn = (
+  const loggedIn = (
     <>
-      <Stack.Screen name="Testing" component={Testing} />
+      {/* <Stack.Screen name="Testing" component={Testing} /> */}
+      <Stack.Screen name="Home" component={Home} />
     </>
   );
 
   return (
     //shows one stack if logged in, another if not
-    <Stack.Navigator>{!userToken ? loggedIn : notLoggedIn}</Stack.Navigator>
+    <Stack.Navigator>{userToken ? loggedIn : notLoggedIn}</Stack.Navigator>
   );
 };

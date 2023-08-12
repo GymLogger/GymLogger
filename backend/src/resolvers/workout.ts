@@ -13,7 +13,7 @@ import { Workout } from "../entities/Workout";
 import { isAuth } from "../isAuth";
 import { Context } from "../types";
 import { FieldError } from "./user";
-import { dataSource } from "src/data-source";
+import { dataSource } from "../data-source";
 import { User } from "../entities/User";
 
 /**
@@ -58,6 +58,9 @@ export class WorkoutResolver {
     @Arg("name") name: string,
     @Ctx() { req }: Context
   ): Promise<WorkoutResponse> {
+    //for testing
+    console.log("req.session.id: ", req.session.id);
+
     //input validation segment
     if (name.length === 0) {
       return {
