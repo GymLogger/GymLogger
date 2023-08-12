@@ -165,7 +165,7 @@ export class UserResolver {
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string,
-    @Ctx() { res }: Context
+    @Ctx() { res, payload }: Context
   ): Promise<LoginResponse> {
     const user = await User.findOne({ where: { email } }); //finds user by email
     if (!user) {
@@ -196,10 +196,15 @@ export class UserResolver {
 
     //logged in successfully
     //refresh token sent in cookie
+    payload = { userId: user.id };
+    // userId = user.id;
     sendRefreshToken(res, createRefreshToken(user));
 
     //access token
     console.log("returning access token");
+    console.log("payload: ", payload);
+
+    //TODO, might need to return obj with accessToken and also teh user
     return {
       accessToken: createAccessToken(user),
     };

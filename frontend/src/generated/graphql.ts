@@ -57,10 +57,21 @@ export type LoginResponse = {
 
 export type Mutation = {
   __typename?: "Mutation";
+  createWorkout: Workout;
+  deleteWorkout: Scalars["Boolean"]["output"];
   login: LoginResponse;
   logout: Scalars["Boolean"]["output"];
   register: LoginResponse;
   revokeRefreshTokensForUser: Scalars["Boolean"]["output"];
+  updateWorkoutName: Workout;
+};
+
+export type MutationCreateWorkoutArgs = {
+  name: Scalars["String"]["input"];
+};
+
+export type MutationDeleteWorkoutArgs = {
+  workoutId: Scalars["Int"]["input"];
 };
 
 export type MutationLoginArgs = {
@@ -77,12 +88,23 @@ export type MutationRevokeRefreshTokensForUserArgs = {
   userId: Scalars["Int"]["input"];
 };
 
+export type MutationUpdateWorkoutNameArgs = {
+  name: Scalars["String"]["input"];
+  workoutId: Scalars["Int"]["input"];
+};
+
 export type Query = {
   __typename?: "Query";
   getUsers: Array<User>;
+  getWorkouts?: Maybe<Array<Workout>>;
   hello: Scalars["String"]["output"];
   me?: Maybe<User>;
   meAuth?: Maybe<User>;
+  workout?: Maybe<Workout>;
+};
+
+export type QueryWorkoutArgs = {
+  workoutId: Scalars["Int"]["input"];
 };
 
 export type Set = {
@@ -108,10 +130,26 @@ export type Workout = {
   __typename?: "Workout";
   createdAt: Scalars["String"]["output"];
   creator: User;
+  creatorId?: Maybe<Scalars["Float"]["output"]>;
   exercises: Array<Exercise>;
-  id: Scalars["Float"]["output"];
   name: Scalars["String"]["output"];
   updatedAt: Scalars["String"]["output"];
+  workoutId: Scalars["Float"]["output"];
+};
+
+export type CreateWorkoutMutationVariables = Exact<{
+  name: Scalars["String"]["input"];
+}>;
+
+export type CreateWorkoutMutation = {
+  __typename?: "Mutation";
+  createWorkout: {
+    __typename?: "Workout";
+    workoutId: number;
+    creatorId?: number | null;
+    createdAt: string;
+    exercises: Array<{ __typename?: "Exercise"; name: string }>;
+  };
 };
 
 export type LoginMutationVariables = Exact<{
@@ -187,6 +225,61 @@ export type MeAuthQuery = {
   } | null;
 };
 
+export const CreateWorkoutDocument = gql`
+  mutation CreateWorkout($name: String!) {
+    createWorkout(name: $name) {
+      workoutId
+      creatorId
+      exercises {
+        name
+      }
+      createdAt
+    }
+  }
+`;
+export type CreateWorkoutMutationFn = Apollo.MutationFunction<
+  CreateWorkoutMutation,
+  CreateWorkoutMutationVariables
+>;
+
+/**
+ * __useCreateWorkoutMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkoutMutation, { data, loading, error }] = useCreateWorkoutMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateWorkoutMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateWorkoutMutation,
+    CreateWorkoutMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateWorkoutMutation,
+    CreateWorkoutMutationVariables
+  >(CreateWorkoutDocument, options);
+}
+export type CreateWorkoutMutationHookResult = ReturnType<
+  typeof useCreateWorkoutMutation
+>;
+export type CreateWorkoutMutationResult =
+  Apollo.MutationResult<CreateWorkoutMutation>;
+export type CreateWorkoutMutationOptions = Apollo.BaseMutationOptions<
+  CreateWorkoutMutation,
+  CreateWorkoutMutationVariables
+>;
 export const LoginDocument = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {

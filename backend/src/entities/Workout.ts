@@ -17,7 +17,7 @@ import { User } from "./User";
 export class Workout extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id!: number; //automatically generated  workout id
+  workoutId!: number; //automatically generated  workout id
 
   @Field(() => String)
   @Column()

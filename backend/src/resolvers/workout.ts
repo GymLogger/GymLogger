@@ -41,8 +41,10 @@ export class WorkoutResolver {
    * @returns the Workout, as an array, or null, if the workout does not exist
    */
   @Query(() => Workout, { nullable: true })
-  workout(@Arg("id", () => Int) id: number): Promise<Workout[] | null> {
-    return Workout.find({ where: { id } });
+  workout(
+    @Arg("workoutId", () => Int) workoutId: number
+  ): Promise<Workout[] | null> {
+    return Workout.find({ where: { workoutId } });
   }
 
   /**
@@ -56,11 +58,11 @@ export class WorkoutResolver {
   @UseMiddleware(isAuth)
   async createWorkout(
     @Arg("name") name: string,
-    @Ctx() { req }: Context
+    @Ctx() { req, payload }: Context
   ): Promise<WorkoutResponse> {
     //for testing
-    console.log("req.session.id: ", req.session.id);
-
+    console.log("IN");
+    console.log("payload: ", payload);
     //input validation segment
     if (name.length === 0) {
       return {
@@ -91,10 +93,14 @@ export class WorkoutResolver {
     const workoutRepository = dataSource.getRepository(Workout);
 
     let user = await userRepository.find({
-      where: { id: parseInt(req.session.id) },
+      where: { id: payload?.userId },
     });
 
+    console.log("user: ", user[0].id);
+    console.log("got to 92");
+
     let workout = new Workout();
+    console.log("workout: ", workout.workoutId);
 
     workout.name = name;
     workout.creatorId = user[0].id;
@@ -111,7 +117,7 @@ export class WorkoutResolver {
   @Query(() => [Workout], { nullable: true })
   @UseMiddleware(isAuth)
   async getWorkouts(@Ctx() { req }: Context): Promise<Workout[] | undefined> {
-    return Workout.find({ where: { id: parseInt(req.session.id) } });
+    return Workout.find({ where: { creatorId: parseInt(req.session.id) } });
   }
 
   /**
@@ -121,9 +127,11 @@ export class WorkoutResolver {
    */
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
-  async deleteWorkout(@Arg("id", () => Int) id: number): Promise<boolean> {
+  async deleteWorkout(
+    @Arg("workoutId", () => Int) workoutId: number
+  ): Promise<boolean> {
     //TODO might need context for userID here as a 2nd field
-    await Workout.delete({ id: id });
+    await Workout.delete({ workoutId });
     return true;
   }
 
@@ -131,13 +139,13 @@ export class WorkoutResolver {
   @UseMiddleware(isAuth)
   async updateWorkoutName(
     @Arg("name") name: string,
-    @Arg("id", () => Int) id: number
+    @Arg("workoutId", () => Int) workoutId: number
   ): Promise<Workout> {
     const workout = await dataSource
       .createQueryBuilder()
       .update(Workout)
       .set({ name: name })
-      .where("id = :id", { id: id }) //TODO might need context for userID here as a 2nd field
+      .where("workoutId = :workoutId", { workoutId: workoutId }) //TODO might need context for userID here as a 2nd field
       .returning("*")
       .execute();
 
