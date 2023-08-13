@@ -96,7 +96,6 @@ export class UserResolver {
   me(@Ctx() context: Context) {
     const authorization = context.req.headers["authorization"];
 
-
     if (!authorization) {
       console.log("no auth found");
       return null;
@@ -142,7 +141,7 @@ export class UserResolver {
       return false;
     }
 
-    const currTokenVersion = user.tokenVersion;
+    const currTokenVersion: number = user.tokenVersion;
 
     //increments the token version for that user by 1
     await dataSource
@@ -166,7 +165,7 @@ export class UserResolver {
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string,
-    @Ctx() { res }: Context
+    @Ctx() { res, payload }: Context
   ): Promise<LoginResponse> {
     const user = await User.findOne({ where: { email } }); //finds user by email
     if (!user) {
@@ -197,10 +196,15 @@ export class UserResolver {
 
     //logged in successfully
     //refresh token sent in cookie
+    payload = { userId: user.id };
+    // userId = user.id;
     sendRefreshToken(res, createRefreshToken(user));
 
     //access token
     console.log("returning access token");
+    console.log("payload: ", payload);
+
+    //TODO, might need to return obj with accessToken and also teh user
     return {
       accessToken: createAccessToken(user),
     };

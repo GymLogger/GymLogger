@@ -1,0 +1,9 @@
+query GetAllWorkouts {
+  getAllWorkouts {
+    workoutId
+    name
+    createdAt
+    updatedAt
+    creatorId
+  }
+}

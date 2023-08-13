@@ -17,7 +17,7 @@ import { User } from "./User";
 export class Workout extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id!: number; //automatically generated  workout id
+  workoutId!: number; //automatically generated  workout id
 
   @Field(() => String)
   @Column()
@@ -31,16 +31,22 @@ export class Workout extends BaseEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
+  //TODO probably don't need both of these
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.workouts)
   creator!: User;
 
-  @Field(() => [Exercise])
+  //TODO probably don't need both of these
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  creatorId!: number;
+
+  @Field(() => [Exercise], { nullable: true })
   @OneToMany(() => Exercise, (exercise) => exercise.workout, {
     cascade: true,
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
     eager: true,
   })
-  exercises!: Exercise[];
+  exercises: Exercise[];
 }
