@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Signup: undefined;
   Testing: undefined;
   Testing2: undefined;
+  OldWorkout: undefined;
 };
 
 export type MessageNavProps<T extends keyof RootStackParamList> = {

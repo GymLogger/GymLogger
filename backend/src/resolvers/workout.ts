@@ -1,34 +1,31 @@
 import {
   Arg,
   Ctx,
-  Field,
   Int,
   Mutation,
-  ObjectType,
   Query,
   Resolver,
   UseMiddleware,
 } from "type-graphql";
+import { dataSource } from "../data-source";
+import { User } from "../entities/User";
 import { Workout } from "../entities/Workout";
 import { isAuth } from "../isAuth";
 import { Context } from "../types";
-import { FieldError } from "./user";
-import { dataSource } from "../data-source";
-import { User } from "../entities/User";
 
 /**
  * @brief Used to provide a response type to Workout creation.
  * Contains an array of FieldErrors, containing a field and a message,
  * or the successfully created Workout
  */
-@ObjectType()
-class WorkoutResponse {
-  @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
+// @ObjectType()
+// class WorkoutResponse {
+//   @Field(() => [FieldError], { nullable: true })
+//   errors?: FieldError[];
 
-  @Field(() => Workout, { nullable: true })
-  workout?: Workout;
-}
+//   @Field(() => Workout, { nullable: true })
+//   workout?: Workout;
+// }
 
 /**
  * Resolvers for Workouts

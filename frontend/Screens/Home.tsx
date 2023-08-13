@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Props } from "../types";
+import { Props, RootStackParamList } from "../types";
 import {
   useCreateWorkoutMutation,
+  useDeleteWorkoutMutation,
   useGetWorkoutsQuery,
   useMeQuery,
 } from "../src/generated/graphql";
@@ -16,6 +17,8 @@ import { NativeBaseProvider, Box, Button, Input } from "native-base";
 import { AuthContext } from "../src/context/AuthContext";
 import HomeScreenWorkout from "../src/components/HomeScreenWorkout";
 import { ScrollView } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 interface HomeProps {}
 
@@ -26,25 +29,49 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
     useGetWorkoutsQuery();
 
   const [createWorkout] = useCreateWorkoutMutation();
+  const [deleteWorkout] = useDeleteWorkoutMutation();
+
   const [workoutName, setWorkoutName] = useState<string>("");
   const [workouts, setWorkouts] = useState(Array<any>);
 
+  const { navigate } = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+  //once workouts are loaded from mutation, set the state variable containing workouts
   useEffect(() => {
     if (dataWorkouts) {
       setWorkouts(dataWorkouts.getWorkouts);
     }
   }, [dataWorkouts]);
 
-  //will add the current workout to
+  //will add the current workout to state variable containing workouts
   const handleCreateWorkout = (w) => {
     setWorkouts([...workouts, w]);
+  };
+
+  //handles deleting a workout and changes the state variable containing workouts
+  const handleDeleteWorkout = (wID: number) => {
+    deleteWorkout({
+      variables: { workoutId: wID },
+      update: (cache) => {
+        cache.evict({ fieldName: "getWorkouts" });
+      },
+    });
+    setWorkouts([...workouts.filter((w) => w.workoutId != wID)]);
+  };
+
+  /**
+   * @brief handles navigation to OldWorkout page, passed
+   * as prop to HomeScreenWorkout component
+   */
+  const handleNavigate = (name: string) => {
+    navigation.navigate("OldWorkout", { name: name });
   };
 
   return (
     <NativeBaseProvider>
       <ScrollView>
         {!loading && data.me?.email && (
-          <Box>Showing workouts here for {data.me?.email}</Box>
+          <Text>Showing workouts here for {data.me?.email}</Text>
         )}
         <Input
           onChangeText={setWorkoutName}
@@ -76,6 +103,7 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
               key={index}
               name={workout.name}
               workoutId={workout.workoutId}
+              handleNavigate={() => handleNavigate(workout.name)}
             ></HomeScreenWorkout>
           ))}
         </Box>

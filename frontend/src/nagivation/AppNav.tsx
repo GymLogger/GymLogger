@@ -11,30 +11,13 @@ import { setAccessToken } from "../accessToken";
 import { AuthContext } from "../context/AuthContext";
 import AppStack from "./AppStack";
 import Home from "../../Screens/Home";
+import OldWorkout from "../../Screens/OldWorkout";
 
 export const AppNav = () => {
   const { isLoading, userToken } = useContext(AuthContext);
   const Stack = createStackNavigator<RootStackParamList>();
 
   const [loading, setLoading] = useState(true);
-
-  //TODO - move this to AuthContext
-  /**
-   * When the page loads, try to get a refresh token from the route.
-   * After, parse it from the json, set the Access Token in Async Storage
-   * and set loading to false
-   */
-  // useEffect(() => {
-  //   fetch("http://localhost:4000/refresh_token", {
-  //     credentials: "include",
-  //     method: "POST",
-  //   }).then(async (x) => {
-  //     const { accessToken } = await x.json();
-  //     setAccessToken(accessToken);
-  //     console.log("data in useEffect for Refresh: ", accessToken);
-  //     setLoading(false);
-  //   });
-  // }, []);
 
   if (isLoading) {
     return (
@@ -58,6 +41,7 @@ export const AppNav = () => {
     <>
       {/* <Stack.Screen name="Testing" component={Testing} /> */}
       <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="OldWorkout" component={OldWorkout} />
     </>
   );
 
