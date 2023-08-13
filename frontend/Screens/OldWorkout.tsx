@@ -16,7 +16,13 @@ const OldWorkout: React.FC = ({ route, navigation }: Props) => {
         <Text>hi!sdfasdfdfd</Text>
         <Text>more text</Text>
         <Text>{JSON.stringify(workoutName)}</Text>
-        <Button onPress={() => handleDeleteWorkout(workoutId)}>
+        <Button
+          onPress={() => {
+            //TODO add some popup in here like "are you sure?"
+            handleDeleteWorkout(workoutId);
+            navigation.goBack();
+          }}
+        >
           delete this workout
         </Button>
       </ScrollView>
