@@ -60,11 +60,16 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
   };
 
   /**
-   * @brief handles navigation to OldWorkout page, passed
+   * Handles navigation to OldWorkout page, passed
    * as prop to HomeScreenWorkout component
+   * @param workoutName name of workout, displayed as title
    */
-  const handleNavigate = (name: string) => {
-    navigation.navigate("OldWorkout", { name: name });
+  const handleNavigate = (workoutName: string, workoutId: number) => {
+    navigation.navigate("OldWorkout", {
+      workoutName,
+      workoutId,
+      handleDeleteWorkout,
+    });
   };
 
   return (
@@ -89,7 +94,6 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
                 cache.evict({ fieldName: "getWorkouts" });
               },
             });
-            console.log("response: ", response);
             handleCreateWorkout(response.data.createWorkout);
           }}
         >
@@ -103,7 +107,9 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
               key={index}
               name={workout.name}
               workoutId={workout.workoutId}
-              handleNavigate={() => handleNavigate(workout.name)}
+              handleNavigate={() =>
+                handleNavigate(workout.name, workout.workoutId)
+              }
             ></HomeScreenWorkout>
           ))}
         </Box>

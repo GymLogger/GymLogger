@@ -41,7 +41,11 @@ export const AppNav = () => {
     <>
       {/* <Stack.Screen name="Testing" component={Testing} /> */}
       <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="OldWorkout" component={OldWorkout} />
+      <Stack.Screen
+        name="OldWorkout"
+        component={OldWorkout}
+        options={({ route }) => ({ title: route.params.workoutName })}
+      />
     </>
   );
 
