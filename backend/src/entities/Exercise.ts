@@ -21,7 +21,7 @@ import { Set } from "./Set";
 export class Exercise extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id!: number; //automatically generated unique exercise id
+  exerciseId!: number; //automatically generated unique exercise id
 
   @Field(() => String)
   @Column()
@@ -38,6 +38,14 @@ export class Exercise extends BaseEntity {
   @Field(() => String)
   @Column()
   variation: string;
+
+  @Field(() => [String])
+  @Column()
+  muscleGroup: string[];
+
+  @Field(() => Boolean)
+  @Column({ default: false })
+  unilateral: boolean;
 
   @Field(() => Workout)
   @ManyToOne(() => Workout, (workout) => workout.exercises)

@@ -8,3 +8,9 @@ export type Context = {
   res: Response; //response to client
   payload?: { userId: number }; //userID also being stored
 };
+
+export type MyExercise = {
+  exercise: string;
+  variation: string;
+  muscleGroup: string[];
+};
