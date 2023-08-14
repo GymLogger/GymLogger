@@ -1,6 +1,5 @@
-import app from "../app";
-
 import request from "supertest";
+import app from "./app";
 
 //test
 describe("Test the root path", () => {
