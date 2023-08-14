@@ -7,11 +7,11 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
-import { dataSource } from "../data-source";
+import { dataSource } from "../data/data-source";
 import { User } from "../entities/User";
 import { Workout } from "../entities/Workout";
-import { isAuth } from "../isAuth";
-import { Context } from "../types";
+import { isAuth } from "../utils/isAuth";
+import { Context } from "../data/types";
 
 /**
  * @brief Used to provide a response type to Workout creation.

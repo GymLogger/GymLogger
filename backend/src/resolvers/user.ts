@@ -11,11 +11,11 @@ import {
   Int,
 } from "type-graphql";
 import { compare, hash } from "bcryptjs";
-import { createAccessToken, createRefreshToken } from "../auth";
-import { Context } from "../types";
-import { isAuth } from "../isAuth";
-import { dataSource } from "../data-source";
-import { sendRefreshToken } from "../sendRefreshToken";
+import { createAccessToken, createRefreshToken } from "../utils/auth";
+import { Context } from "../data/types";
+import { isAuth } from "../utils/isAuth";
+import { dataSource } from "../data/data-source";
+import { sendRefreshToken } from "../utils/sendRefreshToken";
 import { validateRegister } from "../utils/validateRegister";
 import { verify } from "jsonwebtoken";
 

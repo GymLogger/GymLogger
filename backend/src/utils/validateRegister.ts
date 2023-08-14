@@ -1,4 +1,4 @@
-import { EmailPasswordInput } from "../EmailPasswordInput";
+import { EmailPasswordInput } from "../data/EmailPasswordInput";
 
 /**
  * Basic validation for email and password.
