@@ -27,6 +27,6 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "backend/yarn.lock"
       - run: yarn
-        working-directory: "/backend"
+        working-directory: "./backend"
       - run: yarn test
-        working-directory: "/backend"
+        working-directory: "./backend"
