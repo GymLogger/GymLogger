@@ -5,10 +5,13 @@ import "reflect-metadata";
 
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { verify } from "jsonwebtoken";
-import { createAccessToken, createRefreshToken } from "./utils/auth";
+
+import jsonwebtoken from "jsonwebtoken";
+const { verify } = jsonwebtoken;
+
 import { dataSource } from "./data/data-source";
 import { User } from "./entities/User";
+import { createAccessToken, createRefreshToken } from "./utils/auth";
 import { sendRefreshToken } from "./utils/sendRefreshToken";
 
 /**
