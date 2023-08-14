@@ -17,6 +17,7 @@ interface HomeScreenWorkoutProps {
   handleNavigate: () => void;
 }
 
+//test comment
 const HomeScreenWorkout: React.FC<HomeScreenWorkoutProps> = ({
   name,
   workoutId,
