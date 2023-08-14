@@ -10,7 +10,6 @@ export type Context = {
 };
 
 export type MyExercise = {
-  exercise: string;
-  variation: string;
+  exerciseName: string;
   muscleGroup: string[];
 };
