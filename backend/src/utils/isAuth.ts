@@ -1,5 +1,5 @@
 import { MiddlewareFn } from "type-graphql/dist/interfaces/Middleware";
-import { Context } from "./types";
+import { Context } from "../data/types";
 import { verify } from "jsonwebtoken";
 import "dotenv/config";
 

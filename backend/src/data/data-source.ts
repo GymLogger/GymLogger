@@ -1,8 +1,8 @@
 import { DataSource } from "typeorm";
-import { Exercise } from "./entities/Exercise";
-import { User } from "./entities/User";
-import { Workout } from "./entities/Workout";
-import { Set } from "./entities/Set";
+import { Exercise } from "../entities/Exercise";
+import { User } from "../entities/User";
+import { Workout } from "../entities/Workout";
+import { Set } from "../entities/Set";
 // import path from "path";
 
 /**
