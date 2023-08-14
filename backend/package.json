@@ -30,10 +30,13 @@
     "@apollo/server-plugin-landing-page-graphql-playground": "^4.0.1",
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.17",
+    "@types/jest": "^29.5.3",
     "@types/node": "^20.4.1",
     "graphql-tools": "^9.0.0",
+    "jest": "^29.6.2",
     "nodemon": "^3.0.1",
     "postgres": "^3.3.5",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
   }
 }

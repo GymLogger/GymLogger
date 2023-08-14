@@ -39,9 +39,9 @@ export class Exercise extends BaseEntity {
   @Column()
   variation: string;
 
-  @Field(() => [String])
-  @Column()
-  muscleGroup: string[];
+  // @Field(() => [String])
+  // @Column()
+  // muscleGroup: string[];
 
   @Field(() => Boolean)
   @Column({ default: false })

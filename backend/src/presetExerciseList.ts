@@ -1,7 +1,7 @@
 import { MyExercise } from "./types";
 
-const bicepCurl: MyExercise = { 
-  exerciseName: "Bicep Curl", 
+const bicepCurl: MyExercise = {
+  exerciseName: "Bicep Curl",
   muscleGroup: ["Biceps"],
 };
 const hammerCurl: MyExercise = {
@@ -325,7 +325,6 @@ const jackKnives: MyExercise = {
   muscleGroup: ["Abs"],
 };
 
-
 export const presetExerciseList = <MyExercise[]>[bicepCurl, hammerCurl, inclineCurl, declineCurl, preacherCurl,
 overHeadCurl, spiderCurl, reverseCurl, tricepPushDown, overHeadExtension, tricepDips, skullCrushers, forearmCurls, farmersWalk,
 shoulderPress, arnoldPress, landMinePress, lateralRaise, reverseFly, frontRaise, facePull, upRightRow, chestPress, inclineChestPress,
@@ -335,3 +334,4 @@ shrugs, inclineRow, landMineRow, meadowsRow, squat, beltSquat, hackSquat, goblet
 legPress, vSquat, romanianDeadLift, stiffLegDeadLift, legCurl, gluteHamRaise, lunges, splitSquat, hipAdduction, hipAbduction, 
 sumoDeadlift, hipThrust, gluteKickBacks, standingCalfRaise, seatedCalfRaise, calfPress, donkeyCalfRaise, hangingLegRaise,
 hangingKneeRaise, crunches, plank, russianTwists, reverseCrunch, sitUps, jackKnives];
+
