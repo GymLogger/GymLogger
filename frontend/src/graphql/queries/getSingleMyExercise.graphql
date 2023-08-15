@@ -1,0 +1,7 @@
+query GetSingleMyExercise($myExerciseId: Int!) {
+  getSingleMyExercise(myExerciseId: $myExerciseId) {
+    myExerciseId
+    exerciseName
+    muscleGroup
+  }
+}

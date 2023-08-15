@@ -1,0 +1,11 @@
+mutation UpdateMyExerciseName($exerciseName: String!, $myExerciseId: Float!) {
+  updateMyExerciseName(
+    exerciseName: $exerciseName
+    myExerciseId: $myExerciseId
+  ) {
+    myExerciseId
+    exerciseName
+    muscleGroup
+    creatorId
+  }
+}

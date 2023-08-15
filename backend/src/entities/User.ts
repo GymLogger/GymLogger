@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Workout } from "./Workout";
+import { MyExercises } from "./MyExercises";
 
 @ObjectType()
 @Entity()
@@ -40,6 +41,15 @@ export class User extends BaseEntity {
     eager: true,
   })
   workouts!: Workout[]; //one user has many workouts
+
+  @Field(() => [MyExercises], { nullable: true })
+  @OneToMany(() => MyExercises, (myExercises) => myExercises.creator, {
+    cascade: true,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+    eager: true,
+  })
+  myExercises!: MyExercises[]; //one user has many exercises
 
   @Column("int", { default: 0 })
   tokenVersion: number; //incremented on token revoke, used to check token validity
