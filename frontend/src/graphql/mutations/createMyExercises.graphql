@@ -1,0 +1,7 @@
+mutation CreateMyExercises($exerciseName: String!, $muscleGroup: [String!]!) {
+  createMyExercises(exerciseName: $exerciseName, muscleGroup: $muscleGroup) {
+    myExerciseId
+    exerciseName
+    muscleGroup
+  }
+}

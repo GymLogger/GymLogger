@@ -3,6 +3,7 @@ import { Exercise } from "../entities/Exercise";
 import { User } from "../entities/User";
 import { Workout } from "../entities/Workout";
 import { Set } from "../entities/Set";
+import { MyExercises } from "../entities/MyExercises";
 // import path from "path";
 
 /**
@@ -21,5 +22,5 @@ export const dataSource = new DataSource({
   synchronize: true, //turn off in prod
   //running mock migration
   //   migrations: [path.join(__dirname, "./migrations/*")],
-  entities: [User, Workout, Exercise, Set],
+  entities: [User, Workout, Exercise, Set, MyExercises],
 });
