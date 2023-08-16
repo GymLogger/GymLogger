@@ -23,7 +23,7 @@ const documents = {
     "mutation UpdateMyExerciseMuscleGroup($muscleGroup: String!, $myExerciseId: Float!) {\n  updateMyExerciseMuscleGroup(\n    muscleGroup: $muscleGroup\n    myExerciseId: $myExerciseId\n  ) {\n    myExerciseId\n    exerciseName\n    muscleGroup\n    creatorId\n  }\n}": types.UpdateMyExerciseMuscleGroupDocument,
     "mutation UpdateMyExerciseName($exerciseName: String!, $myExerciseId: Float!) {\n  updateMyExerciseName(exerciseName: $exerciseName, myExerciseId: $myExerciseId) {\n    myExerciseId\n    exerciseName\n    muscleGroup\n    creatorId\n  }\n}": types.UpdateMyExerciseNameDocument,
     "query GetAllWorkouts {\n  getAllWorkouts {\n    workoutId\n    name\n    createdAt\n    updatedAt\n    creatorId\n  }\n}": types.GetAllWorkoutsDocument,
-    "query GetMyExercises {\n  getMyExercises {\n    myExerciseId\n    exerciseName\n    muscleGroup\n  }\n}": types.GetMyExercisesDocument,
+    "query GetMyExercises {\n  getMyExercises {\n    exerciseName\n    muscleGroup\n    creatorId\n    myExerciseId\n  }\n}": types.GetMyExercisesDocument,
     "query GetSingleMyExercise($myExerciseId: Int!) {\n  getSingleMyExercise(myExerciseId: $myExerciseId) {\n    myExerciseId\n    exerciseName\n    muscleGroup\n  }\n}": types.GetSingleMyExerciseDocument,
     "query GetUsers {\n  getUsers {\n    id\n    email\n  }\n}": types.GetUsersDocument,
     "query GetWorkouts {\n  getWorkouts {\n    workoutId\n    name\n    createdAt\n    updatedAt\n    creatorId\n  }\n}": types.GetWorkoutsDocument,
@@ -88,7 +88,7 @@ export function graphql(source: "query GetAllWorkouts {\n  getAllWorkouts {\n   
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query GetMyExercises {\n  getMyExercises {\n    myExerciseId\n    exerciseName\n    muscleGroup\n  }\n}"): (typeof documents)["query GetMyExercises {\n  getMyExercises {\n    myExerciseId\n    exerciseName\n    muscleGroup\n  }\n}"];
+export function graphql(source: "query GetMyExercises {\n  getMyExercises {\n    exerciseName\n    muscleGroup\n    creatorId\n    myExerciseId\n  }\n}"): (typeof documents)["query GetMyExercises {\n  getMyExercises {\n    exerciseName\n    muscleGroup\n    creatorId\n    myExerciseId\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

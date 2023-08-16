@@ -12,6 +12,7 @@ import { AuthContext } from "../context/AuthContext";
 import AppStack from "./AppStack";
 import Home from "../../Screens/Home";
 import OldWorkout from "../../Screens/OldWorkout";
+import CreateExercise from "../../Screens/CreateExercise";
 
 export const AppNav = () => {
   const { isLoading, userToken } = useContext(AuthContext);
@@ -46,6 +47,7 @@ export const AppNav = () => {
         component={OldWorkout}
         options={({ route }) => ({ title: route.params.workoutName })}
       />
+      <Stack.Screen name="CreateExercise" component={CreateExercise} />
     </>
   );
 
