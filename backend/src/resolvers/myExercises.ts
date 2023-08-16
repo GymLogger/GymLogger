@@ -41,7 +41,7 @@ export class MyExercisesResolver {
   @UseMiddleware(isAuth)
   async getMyExercises(
     @Ctx() { payload }: Context
-  ): Promise<MyExercises[] | null> {
+  ): Promise<MyExercises[] | undefined> {
     return MyExercises.find({ where: { creatorId: payload?.userId } });
   }
 

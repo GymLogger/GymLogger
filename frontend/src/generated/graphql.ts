@@ -320,9 +320,10 @@ export type GetMyExercisesQuery = {
   __typename?: "Query";
   getMyExercises: Array<{
     __typename?: "MyExercises";
-    myExerciseId: number;
     exerciseName: string;
     muscleGroup: Array<string>;
+    creatorId?: number | null;
+    myExerciseId: number;
   }>;
 };
 
@@ -921,9 +922,10 @@ export type GetAllWorkoutsQueryResult = Apollo.QueryResult<
 export const GetMyExercisesDocument = gql`
   query GetMyExercises {
     getMyExercises {
-      myExerciseId
       exerciseName
       muscleGroup
+      creatorId
+      myExerciseId
     }
   }
 `;

@@ -3,10 +3,6 @@ import React from "react";
 import { Props } from "../types";
 import { ScrollView } from "react-native-gesture-handler";
 
-interface OldWorkoutProps {
-  workoutName: string;
-}
-
 const OldWorkout: React.FC = ({ route, navigation }: Props) => {
   const { workoutName, handleDeleteWorkout, workoutId } = route.params;
 

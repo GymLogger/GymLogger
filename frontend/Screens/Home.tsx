@@ -1,11 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Props, RootStackParamList } from "../types";
-import {
-  useCreateWorkoutMutation,
-  useDeleteWorkoutMutation,
-  useGetWorkoutsQuery,
-  useMeQuery,
-} from "../src/generated/graphql";
+
 import {
   View,
   Text,
@@ -19,6 +14,12 @@ import HomeScreenWorkout from "../src/components/HomeScreenWorkout";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import {
+  useMeQuery,
+  useGetWorkoutsQuery,
+  useCreateWorkoutMutation,
+  useDeleteWorkoutMutation,
+} from "../src/generated/graphql";
 
 interface HomeProps {}
 
@@ -84,6 +85,7 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
           placeholder="workout"
         />
         <Button
+          mt="1"
           onPress={async () => {
             console.log("personal ID: ", data.me.id);
             console.log("workout name: ", workoutName);
@@ -99,7 +101,12 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
         >
           create workout
         </Button>
-        <Button onPress={() => logout()}>logout</Button>
+        <Button mt="1" onPress={() => logout()}>
+          logout
+        </Button>
+        <Button mt="1" onPress={() => navigation.navigate("CreateExercise")}>
+          create new exercise
+        </Button>
         <Box>list of workouts</Box>
         <Box>
           {workouts.map((workout, index) => (
