@@ -12,6 +12,7 @@ import { User } from "../entities/User";
 import { Workout } from "../entities/Workout";
 import { isAuth } from "../utils/isAuth";
 import { Context } from "../data/types";
+import { Exercise } from "../entities/Exercise";
 
 /**
  * @brief Used to provide a response type to Workout creation.
@@ -93,10 +94,7 @@ export class WorkoutResolver {
     workout.name = name;
     workout.creatorId = user[0].id;
 
-    console.log("got to 104");
     workout = await workoutRepository.save(workout);
-
-    console.log("workout: ", workout);
 
     return workout;
   }
@@ -144,7 +142,7 @@ export class WorkoutResolver {
       .update(Workout)
       .set({ name: name })
       .where("workoutId = :workoutId", { workoutId: workoutId })
-      .where({ creatorId: payload?.userId })
+      .where({ creatorId: payload?.userId }) //TODO does this work?? 2 wheres?
       .returning("*")
       .execute();
 
@@ -156,5 +154,11 @@ export class WorkoutResolver {
   @Query(() => [Workout])
   getAllWorkouts() {
     return Workout.find();
+  }
+
+  @Query(() => [Exercise], { nullable: true })
+  @UseMiddleware(isAuth)
+  getExercisesForWorkout(@Arg("workoutId") workoutId: number) {
+    return Exercise.find({ where: { workoutId } });
   }
 }

@@ -25,7 +25,11 @@ export class Exercise extends BaseEntity {
 
   @Field(() => String)
   @Column()
-  name!: string;
+  exerciseName!: string;
+
+  @Field(() => [String])
+  @Column("text", { array: true })
+  muscleGroup: string[];
 
   @Field(() => String)
   @CreateDateColumn()
@@ -39,13 +43,17 @@ export class Exercise extends BaseEntity {
   @Column()
   variation: string;
 
-  // @Field(() => [String])
-  // @Column()
-  // muscleGroup: string[];
-
   @Field(() => Boolean)
   @Column({ default: false })
   unilateral: boolean;
+
+  @Field()
+  @Column()
+  workoutId!: number;
+
+  @Field()
+  @Column()
+  creatorId!: number;
 
   @Field(() => Workout)
   @ManyToOne(() => Workout, (workout) => workout.exercises)

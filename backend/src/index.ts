@@ -9,6 +9,7 @@ import { Context } from "./data/types";
 import { WorkoutResolver } from "./resolvers/workout";
 import app from "./app";
 import { MyExercisesResolver } from "./resolvers/myExercises";
+import { ExerciseResolver } from "./resolvers/exercise";
 
 const main = async () => {
   //express app listening on port 4000
@@ -19,7 +20,12 @@ const main = async () => {
   //apollo server declared
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, WorkoutResolver, MyExercisesResolver], //sets resolvers
+      resolvers: [
+        UserResolver,
+        WorkoutResolver,
+        MyExercisesResolver,
+        ExerciseResolver,
+      ], //sets resolvers
       validate: false,
     }),
     //passing in session context
