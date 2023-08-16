@@ -15,10 +15,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import {
-  useMeQuery,
-  useGetWorkoutsQuery,
   useCreateWorkoutMutation,
   useDeleteWorkoutMutation,
+  useGetWorkoutsQuery,
+  useMeQuery,
 } from "../src/generated/graphql";
 
 interface HomeProps {}

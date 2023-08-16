@@ -41,6 +41,7 @@ export class WorkoutResolver {
   workout(
     @Arg("workoutId", () => Int) workoutId: number
   ): Promise<Workout[] | null> {
+    //TODO add auth
     return Workout.find({ where: { workoutId } });
   }
 
@@ -54,9 +55,6 @@ export class WorkoutResolver {
   @Mutation(() => Workout)
   @UseMiddleware(isAuth)
   async createWorkout(@Arg("name") name: string, @Ctx() { payload }: Context) {
-    //for testing
-    console.log("IN");
-    console.log("payload: ", payload);
     //input validation segment
     if (name.length === 0) {
       return {
@@ -127,10 +125,10 @@ export class WorkoutResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteWorkout(
-    @Arg("workoutId", () => Int) workoutId: number
+    @Arg("workoutId", () => Int) workoutId: number,
+    @Ctx() { payload }: Context
   ): Promise<boolean> {
-    //TODO might need context for userID here as a 2nd field
-    await Workout.delete({ workoutId });
+    await Workout.delete({ workoutId, creatorId: payload?.userId });
     return true;
   }
 
@@ -138,13 +136,15 @@ export class WorkoutResolver {
   @UseMiddleware(isAuth)
   async updateWorkoutName(
     @Arg("name") name: string,
-    @Arg("workoutId", () => Int) workoutId: number
+    @Arg("workoutId", () => Int) workoutId: number,
+    @Ctx() { payload }: Context
   ): Promise<Workout> {
     const workout = await dataSource
       .createQueryBuilder()
       .update(Workout)
       .set({ name: name })
-      .where("workoutId = :workoutId", { workoutId: workoutId }) //TODO might need context for userID here as a 2nd field
+      .where("workoutId = :workoutId", { workoutId: workoutId })
+      .where({ creatorId: payload?.userId })
       .returning("*")
       .execute();
 
