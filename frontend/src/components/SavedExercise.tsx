@@ -12,8 +12,8 @@ const SavedExercise: React.FC<SavedExerciseProps> = ({
 }: SavedExerciseProps) => {
   return (
     <NativeBaseProvider>
-      <Text>{exerciseName}</Text>
-      {/* <Text>{muscleGroup.toString()}</Text> */}
+      <Text mt="2">name: {exerciseName}</Text>
+      <Text>muscle group: {muscleGroup.toString()}</Text>
     </NativeBaseProvider>
   );
 };

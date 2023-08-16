@@ -12,12 +12,6 @@ import { ScrollView } from "react-native-gesture-handler";
 
 interface CreateExerciseProps {}
 
-interface ExerciseInterface {
-  exerciseName: string;
-  muscleGroup: string[];
-  myExerciseId: number;
-}
-
 const CreateExercise: React.FC<CreateExerciseProps> = ({
   route,
   navigation,
@@ -27,7 +21,7 @@ const CreateExercise: React.FC<CreateExerciseProps> = ({
     fetchPolicy: "network-only",
   });
 
-  const [myExercises, setMyExercises] = useState<Array<any>>(null);
+  const [myExercises, setMyExercises] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -52,22 +46,17 @@ const CreateExercise: React.FC<CreateExerciseProps> = ({
             <Text>loading...</Text>
           ) : (
             <Box>
-              <Box>not loading.</Box>
               <Box>
-                {data.getMyExercises.map((exercise, index) => {
-                  <Box>asdfasdf</Box>;
-                })}
+                {myExercises?.map((exercise, index) => (
+                  <SavedExercise
+                    key={index}
+                    exerciseName={exercise.exerciseName}
+                    muscleGroup={exercise.muscleGroup}
+                  />
+                ))}
               </Box>
-              {/* <Box>{myExercises[0]?.exerciseName}</Box> */}
             </Box>
           )}
-        </Box>
-
-        <Box>
-          {myExercises !== null &&
-            myExercises.forEach((e) => {
-              <Box>eeeeeeee</Box>;
-            })}
         </Box>
 
         {dataMe?.me?.email && <Text>{dataMe.me.email}</Text>}
