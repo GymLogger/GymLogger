@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Workout } from "./Workout";
-import { Set } from "./Set";
+import { Sets } from "./Set";
 
 /**
  * Exercise class with typeorm, exposed in type-graphql
@@ -59,10 +59,10 @@ export class Exercise extends BaseEntity {
   @ManyToOne(() => Workout, (workout) => workout.exercises)
   workout!: Workout;
 
-  @Field(() => [Set])
-  @OneToMany(() => Set, (set) => set.exercise, {
+  @Field(() => [Sets])
+  @OneToMany(() => Sets, (set) => set.exercise, {
     cascade: true,
     eager: true,
   })
-  sets: Set[];
+  sets: Sets[];
 }

@@ -1,6 +1,8 @@
 import {
   Arg,
   Ctx,
+  Field,
+  InputType,
   Int,
   Mutation,
   Query,
@@ -8,11 +10,13 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { dataSource } from "../data/data-source";
+import { Context } from "../data/types";
 import { User } from "../entities/User";
 import { Workout } from "../entities/Workout";
 import { isAuth } from "../utils/isAuth";
-import { Context } from "../data/types";
+import { MyExercises } from "../entities/MyExercises";
 import { Exercise } from "../entities/Exercise";
+import { Sets } from "../entities/Set";
 
 /**
  * @brief Used to provide a response type to Workout creation.
@@ -27,6 +31,26 @@ import { Exercise } from "../entities/Exercise";
 //   @Field(() => Workout, { nullable: true })
 //   workout?: Workout;
 // }
+
+@InputType()
+class ExerciseInput {
+  @Field(() => Int)
+  myExerciseId: number;
+
+  @Field()
+  variation: string;
+
+  @Field(() => [SetInput])
+  sets: SetInput[];
+}
+
+@InputType()
+class SetInput {
+  @Field(() => Int)
+  weight: number;
+  @Field(() => Int)
+  reps: number;
+}
 
 /**
  * Resolvers for Workouts
@@ -44,6 +68,79 @@ export class WorkoutResolver {
   ): Promise<Workout[] | null> {
     //TODO add auth
     return Workout.find({ where: { workoutId } });
+  }
+
+  @Mutation(() => Workout)
+  @UseMiddleware(isAuth)
+  async createFullWorkout(
+    @Arg("name") name: string,
+    @Arg("exercises", () => [ExerciseInput])
+    exercises: ExerciseInput[],
+    @Ctx() { payload }: Context
+  ) {
+    if (name.length === 0) {
+      return {
+        errors: [
+          {
+            message: "workout name cannot be empty",
+            field: "workout",
+          },
+        ],
+      };
+    }
+    if (name.length > 30) {
+      return {
+        errors: [
+          {
+            message: "workout must have 30 or fewer characters",
+            field: "workout",
+          },
+        ],
+      };
+    }
+    //all other methods were not returning the id, or overwriting it with workout id
+    //must use repository, manually assign data (cannot use spread operator), then save via repository
+    //this is a known issue with typeorm for postgres with multiple tables, many to one, with an updatedDate column
+    // as per issues on their github
+
+    const userRepository = dataSource.getRepository(User);
+    const workoutRepository = dataSource.getRepository(Workout);
+
+    let user = await userRepository.find({
+      where: { id: payload?.userId },
+    });
+
+    let workout = new Workout();
+
+    workout.name = name;
+    workout.creatorId = user[0].id;
+
+    workout = await workoutRepository.save(workout);
+
+    //exercise and set part
+    //TODO refactor this
+
+    const exerciseRepository = dataSource.getRepository(Exercise);
+    const setRepository = dataSource.getRepository(Sets);
+
+    //TODO this is horrible. fix it.
+    exercises.forEach(async (exerciseInput) => {
+      const rawMyExercise = await MyExercises.find({
+        where: { myExerciseId: exerciseInput.myExerciseId },
+      });
+      const myExercise = rawMyExercise[0];
+      const exercise = new Exercise();
+      exercise.exerciseName = myExercise.exerciseName;
+      exercise.muscleGroup = myExercise.muscleGroup;
+      exercise.creatorId = payload?.userId as number;
+      exercise.variation = exerciseInput.variation;
+      exercise.workout = workout;
+
+      exerciseRepository.save(exercise);
+
+      exerciseInput.sets.forEach((setInput) => {});
+    });
+    return workout;
   }
 
   /**
@@ -154,11 +251,5 @@ export class WorkoutResolver {
   @Query(() => [Workout])
   getAllWorkouts() {
     return Workout.find();
-  }
-
-  @Query(() => [Exercise], { nullable: true })
-  @UseMiddleware(isAuth)
-  getExercisesForWorkout(@Arg("workoutId") workoutId: number) {
-    return Exercise.find({ where: { workoutId } });
   }
 }

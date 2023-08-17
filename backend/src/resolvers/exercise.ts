@@ -41,6 +41,16 @@ export class ExerciseResolver {
     return true;
   }
 
+  /**
+   * Creates a new Exercise
+   * TODO make another method where workout can be passed in directly
+   * to reduce SQL queries
+   * @param myExerciseId Saved MyExercise unique id, number
+   * @param workoutId number, unique ID of the parent workout
+   * @param variation string, variation type
+   * @param Ctx containing payload with userID
+   * @returns a newly created Exercise
+   */
   @Mutation(() => Exercise)
   @UseMiddleware(isAuth)
   async createExercise(

@@ -12,7 +12,7 @@ import { Exercise } from "./Exercise";
 
 @ObjectType()
 @Entity()
-export class Set extends BaseEntity {
+export class Sets extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number; //automatically generated unique set id

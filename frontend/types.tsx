@@ -20,6 +20,7 @@ export type RootStackParamList = {
     handleDeleteWorkout: (wID: number) => void;
     workoutId: number;
   };
+  CurrentWorkout: undefined;
 };
 
 export type MessageNavProps<T extends keyof RootStackParamList> = {

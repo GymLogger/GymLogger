@@ -76,7 +76,7 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
   return (
     <NativeBaseProvider>
       <ScrollView>
-        {!loading && data.me?.email && (
+        {!loading && data?.me?.email && (
           <Text>Showing workouts here for {data.me?.email}</Text>
         )}
         <Input
@@ -99,13 +99,16 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
             handleCreateWorkout(response.data.createWorkout);
           }}
         >
-          create workout
+          create workout - testing
         </Button>
         <Button mt="1" onPress={() => logout()}>
           logout
         </Button>
         <Button mt="1" onPress={() => navigation.navigate("CreateExercise")}>
           create new exercise
+        </Button>
+        <Button mt="1" onPress={() => navigation.navigate("CurrentWorkout")}>
+          start a new workout
         </Button>
         <Box>list of workouts</Box>
         <Box>
