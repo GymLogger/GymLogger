@@ -50,6 +50,8 @@ class SetInput {
   weight: number;
   @Field(() => Int)
   reps: number;
+  @Field(() => Int)
+  time: number;
 }
 
 /**
@@ -138,7 +140,24 @@ export class WorkoutResolver {
 
       exerciseRepository.save(exercise);
 
-      exerciseInput.sets.forEach((setInput) => {});
+      exerciseInput.sets.forEach(async (setInput) => {
+        if (
+          setInput.time === undefined &&
+          (setInput.reps === undefined || setInput.weight === undefined)
+        ) {
+          return false;
+        }
+        let set = new Sets();
+
+        set.weight = setInput.weight;
+        set.reps = setInput.reps;
+        set.time = setInput.time;
+        set.exercise = exercise;
+        set.creatorId = payload?.userId as number;
+
+        set = await setRepository.save(set);
+        return;
+      });
     });
     return workout;
   }
@@ -182,14 +201,16 @@ export class WorkoutResolver {
     const userRepository = dataSource.getRepository(User);
     const workoutRepository = dataSource.getRepository(Workout);
 
-    let user = await userRepository.find({
+    let rawUser = await userRepository.find({
       where: { id: payload?.userId },
     });
+    const user = rawUser[0];
 
     let workout = new Workout();
 
     workout.name = name;
-    workout.creatorId = user[0].id;
+    workout.creatorId = user.id;
+    workout.creator = user;
 
     workout = await workoutRepository.save(workout);
 

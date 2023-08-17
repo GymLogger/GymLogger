@@ -15,15 +15,27 @@ import { Exercise } from "./Exercise";
 export class Sets extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id!: number; //automatically generated unique set id
+  setId!: number; //automatically generated unique set id
 
   @Field()
   @Column()
-  weight: number;
+  weight?: number;
 
   @Field()
   @Column()
-  reps: number;
+  reps?: number;
+
+  @Field()
+  @Column()
+  time?: number;
+
+  @Field()
+  @Column()
+  creatorId: number;
+
+  @Field()
+  @Column()
+  exerciseId: number;
 
   @Field(() => String)
   @CreateDateColumn()
