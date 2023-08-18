@@ -1,13 +1,17 @@
-import { NativeBaseProvider } from "native-base";
+import { Box, NativeBaseProvider } from "native-base";
 import React from "react";
 import { ScrollView } from "react-native-gesture-handler";
+import { ExerciseProps } from "../../Screens/CurrentWorkout";
 
-interface ExerciseProps {}
-
-const Exercise: React.FC<ExerciseProps> = ({}) => {
+const Exercise: React.FC<ExerciseProps> = ({
+  exerciseName,
+  muscleGroup,
+  variation,
+  sets,
+}: ExerciseProps) => {
   return (
     <NativeBaseProvider>
-      <ScrollView></ScrollView>
+      <Box>{exerciseName}</Box>
     </NativeBaseProvider>
   );
 };
