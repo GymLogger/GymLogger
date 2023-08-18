@@ -58,9 +58,19 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
   //loads MyExercises and sets then in state
   useEffect(() => {
     if (dataMyExercises) {
+      console.log("in the loading use effect");
       setMyExercises(dataMyExercises.getMyExercises);
     }
   }, [dataMyExercises]);
+
+  //TODO figure out the typing here
+  const handleSetSearchValue = (e: string) => {
+    setSearchValue(e);
+  };
+
+  useEffect(() => {
+    console.log("search value: ", searchValue);
+  }, [searchValue]);
 
   return (
     <NativeBaseProvider>
@@ -84,7 +94,7 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
               />
             ))}
         </Stack>
-        <MyExerciseSearchBar />
+        <MyExerciseSearchBar handleChange={handleSetSearchValue} />
         <Flex direction="row" mt="5">
           <Button w="150" borderRadius="30">
             add exercise
@@ -99,9 +109,7 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
           >
             {myExercises?.map(
               (exercise, index) =>
-                exercise.exerciseName
-                  .toLowerCase()
-                  .includes(searchValue.toLowerCase()) && (
+                exercise.exerciseName.includes(searchValue) && (
                   <Select.Item
                     label={exercise.exerciseName}
                     value={exercise.exerciseName}

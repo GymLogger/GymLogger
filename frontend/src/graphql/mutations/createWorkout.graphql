@@ -2,9 +2,6 @@ mutation CreateWorkout($name: String!) {
   createWorkout(name: $name) {
     workoutId
     creatorId
-    exercises {
-      name
-    }
     createdAt
   }
 }

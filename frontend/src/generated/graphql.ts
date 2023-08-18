@@ -35,13 +35,22 @@ export type Scalars = {
 export type Exercise = {
   __typename?: "Exercise";
   createdAt: Scalars["String"]["output"];
+  creatorId: Scalars["Float"]["output"];
   exerciseId: Scalars["Float"]["output"];
-  name: Scalars["String"]["output"];
-  sets: Array<Set>;
+  exerciseName: Scalars["String"]["output"];
+  muscleGroup: Array<Scalars["String"]["output"]>;
+  sets: Array<Sets>;
   unilateral: Scalars["Boolean"]["output"];
   updatedAt: Scalars["String"]["output"];
   variation: Scalars["String"]["output"];
   workout: Workout;
+  workoutId: Scalars["Float"]["output"];
+};
+
+export type ExerciseInput = {
+  myExerciseId: Scalars["Int"]["input"];
+  sets: Array<SetInput>;
+  variation: Scalars["String"]["input"];
 };
 
 export type FieldError = {
@@ -58,8 +67,12 @@ export type LoginResponse = {
 
 export type Mutation = {
   __typename?: "Mutation";
+  createExercise: Exercise;
+  createFullWorkout: Workout;
   createMyExercises: MyExercises;
+  createSet: Scalars["Boolean"]["output"];
   createWorkout: Workout;
+  deleteExercise: Scalars["Boolean"]["output"];
   deleteMyExercise: Scalars["Boolean"]["output"];
   deleteWorkout: Scalars["Boolean"]["output"];
   login: LoginResponse;
@@ -71,13 +84,36 @@ export type Mutation = {
   updateWorkoutName: Workout;
 };
 
+export type MutationCreateExerciseArgs = {
+  myExerciseId: Scalars["Float"]["input"];
+  variation: Scalars["String"]["input"];
+  workoutId: Scalars["Float"]["input"];
+};
+
+export type MutationCreateFullWorkoutArgs = {
+  exercises: Array<ExerciseInput>;
+  name: Scalars["String"]["input"];
+};
+
 export type MutationCreateMyExercisesArgs = {
   exerciseName: Scalars["String"]["input"];
   muscleGroup: Array<Scalars["String"]["input"]>;
 };
 
+export type MutationCreateSetArgs = {
+  creatorId: Scalars["Float"]["input"];
+  exerciseId: Scalars["Float"]["input"];
+  reps: Scalars["Float"]["input"];
+  time: Scalars["Float"]["input"];
+  weight: Scalars["Float"]["input"];
+};
+
 export type MutationCreateWorkoutArgs = {
   name: Scalars["String"]["input"];
+};
+
+export type MutationDeleteExerciseArgs = {
+  exerciseId: Scalars["Int"]["input"];
 };
 
 export type MutationDeleteMyExerciseArgs = {
@@ -131,7 +167,11 @@ export type MyExercises = {
 export type Query = {
   __typename?: "Query";
   getAllWorkouts: Array<Workout>;
+  getExercise?: Maybe<Exercise>;
+  getExercisesForWorkout?: Maybe<Array<Exercise>>;
   getMyExercises: Array<MyExercises>;
+  getSet?: Maybe<Sets>;
+  getSetsForExercise?: Maybe<Array<Sets>>;
   getSingleMyExercise: MyExercises;
   getUsers: Array<User>;
   getWorkouts?: Maybe<Array<Workout>>;
@@ -139,6 +179,22 @@ export type Query = {
   me?: Maybe<User>;
   meAuth?: Maybe<User>;
   workout?: Maybe<Workout>;
+};
+
+export type QueryGetExerciseArgs = {
+  exerciseId: Scalars["Int"]["input"];
+};
+
+export type QueryGetExercisesForWorkoutArgs = {
+  workoutId: Scalars["Float"]["input"];
+};
+
+export type QueryGetSetArgs = {
+  setId: Scalars["Float"]["input"];
+};
+
+export type QueryGetSetsForExerciseArgs = {
+  exerciseId: Scalars["Float"]["input"];
 };
 
 export type QueryGetSingleMyExerciseArgs = {
@@ -149,12 +205,21 @@ export type QueryWorkoutArgs = {
   workoutId: Scalars["Int"]["input"];
 };
 
-export type Set = {
-  __typename?: "Set";
+export type SetInput = {
+  reps: Scalars["Int"]["input"];
+  time: Scalars["Int"]["input"];
+  weight: Scalars["Int"]["input"];
+};
+
+export type Sets = {
+  __typename?: "Sets";
   createdAt: Scalars["String"]["output"];
+  creatorId: Scalars["Float"]["output"];
   exercise: Array<Exercise>;
-  id: Scalars["Float"]["output"];
+  exerciseId: Scalars["Float"]["output"];
   reps: Scalars["Float"]["output"];
+  setId: Scalars["Float"]["output"];
+  time: Scalars["Float"]["output"];
   updatedAt: Scalars["String"]["output"];
   weight: Scalars["Float"]["output"];
 };
@@ -206,7 +271,6 @@ export type CreateWorkoutMutation = {
     workoutId: number;
     creatorId?: number | null;
     createdAt: string;
-    exercises?: Array<{ __typename?: "Exercise"; name: string }> | null;
   };
 };
 
@@ -322,8 +386,8 @@ export type GetMyExercisesQuery = {
     __typename?: "MyExercises";
     exerciseName: string;
     muscleGroup: Array<string>;
-    creatorId?: number | null;
     myExerciseId: number;
+    creatorId?: number | null;
   }>;
 };
 
@@ -446,9 +510,6 @@ export const CreateWorkoutDocument = gql`
     createWorkout(name: $name) {
       workoutId
       creatorId
-      exercises {
-        name
-      }
       createdAt
     }
   }
@@ -924,8 +985,8 @@ export const GetMyExercisesDocument = gql`
     getMyExercises {
       exerciseName
       muscleGroup
-      creatorId
       myExerciseId
+      creatorId
     }
   }
 `;

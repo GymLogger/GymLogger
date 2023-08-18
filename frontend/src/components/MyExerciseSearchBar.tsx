@@ -1,9 +1,13 @@
 import { VStack, Box, Divider, Heading, Input, Icon } from "native-base";
 import React from "react";
 
-interface MyExerciseSearchBarProps {}
+interface MyExerciseSearchBarProps {
+  handleChange: (e: string) => void;
+}
 
-const MyExerciseSearchBar: React.FC<MyExerciseSearchBarProps> = ({}) => {
+const MyExerciseSearchBar: React.FC<MyExerciseSearchBarProps> = ({
+  handleChange,
+}: MyExerciseSearchBarProps) => {
   return (
     <VStack w="100%" space={5} alignSelf="center">
       <Input
@@ -15,6 +19,7 @@ const MyExerciseSearchBar: React.FC<MyExerciseSearchBarProps> = ({}) => {
         py="1"
         px="2"
         InputLeftElement={<Icon ml="2" size="6" color="gray.400" />}
+        onChangeText={handleChange}
       />
     </VStack>
   );

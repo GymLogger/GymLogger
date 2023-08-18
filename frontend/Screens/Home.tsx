@@ -47,6 +47,7 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
   //will add the current workout to state variable containing workouts
   const handleCreateWorkout = (w) => {
     setWorkouts([...workouts, w]);
+    console.log("workouts: ", workouts);
   };
 
   //handles deleting a workout and changes the state variable containing workouts
@@ -96,6 +97,7 @@ const Home: React.FC<HomeProps> = ({ route, navigation }: Props) => {
                 cache.evict({ fieldName: "getWorkouts" });
               },
             });
+            console.log("response: ", response);
             handleCreateWorkout(response.data.createWorkout);
           }}
         >

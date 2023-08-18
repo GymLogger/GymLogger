@@ -209,7 +209,7 @@ export class WorkoutResolver {
     let workout = new Workout();
 
     workout.name = name;
-    workout.creatorId = user.id;
+    workout.creatorId = payload?.userId as number;
     workout.creator = user;
 
     workout = await workoutRepository.save(workout);
