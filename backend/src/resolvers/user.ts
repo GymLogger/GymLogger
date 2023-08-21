@@ -11,6 +11,7 @@ import {
   Int,
 } from "type-graphql";
 import { compare, hash } from "bcryptjs";
+
 import { createAccessToken, createRefreshToken } from "../utils/auth";
 import { Context } from "../data/types";
 import { isAuth } from "../utils/isAuth";
@@ -275,15 +276,7 @@ export class UserResolver {
 
     presetExerciseList.forEach(async (exercise) => {
       console.log("exercise in map: ", exercise);
-      // await dataSource
-      //   .createQueryBuilder()
-      //   .insert()
-      //   .into(MyExercises)
-      //   .values([
-      //     { exerciseName: exercise.exerciseName },
-      //     { muscleGroup: exercise.muscleGroup },
-      //   ])
-      //   .execute();
+
       let myExercise = new MyExercises();
       myExercise.exerciseName = exercise.exerciseName;
       myExercise.muscleGroup = exercise.muscleGroup;

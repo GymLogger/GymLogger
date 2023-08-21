@@ -6,7 +6,6 @@ import { ExerciseProps } from "../../Screens/CurrentWorkout";
 const Exercise: React.FC<ExerciseProps> = ({
   exerciseName,
   muscleGroup,
-  variation,
   sets,
 }: ExerciseProps) => {
   return (
