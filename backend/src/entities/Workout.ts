@@ -34,7 +34,7 @@ export class Workout extends BaseEntity {
   //TODO probably don't need both of these
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.workouts)
-  creator!: User;
+  creator: User;
 
   //TODO probably don't need both of these
   @Field({ nullable: true })

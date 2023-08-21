@@ -1,6 +1,8 @@
 import {
   Arg,
   Ctx,
+  Field,
+  InputType,
   Int,
   Mutation,
   Query,
@@ -8,10 +10,13 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { dataSource } from "../data/data-source";
+import { Context } from "../data/types";
 import { User } from "../entities/User";
 import { Workout } from "../entities/Workout";
 import { isAuth } from "../utils/isAuth";
-import { Context } from "../data/types";
+import { MyExercises } from "../entities/MyExercises";
+import { Exercise } from "../entities/Exercise";
+import { Sets } from "../entities/Set";
 
 /**
  * @brief Used to provide a response type to Workout creation.
@@ -27,6 +32,28 @@ import { Context } from "../data/types";
 //   workout?: Workout;
 // }
 
+@InputType()
+class ExerciseInput {
+  @Field(() => Int)
+  myExerciseId: number;
+
+  @Field()
+  variation: string;
+
+  @Field(() => [SetInput])
+  sets: SetInput[];
+}
+
+@InputType()
+class SetInput {
+  @Field(() => Int)
+  weight: number;
+  @Field(() => Int)
+  reps: number;
+  @Field(() => Int)
+  time: number;
+}
+
 /**
  * Resolvers for Workouts
  */
@@ -41,23 +68,18 @@ export class WorkoutResolver {
   workout(
     @Arg("workoutId", () => Int) workoutId: number
   ): Promise<Workout[] | null> {
+    //TODO add auth
     return Workout.find({ where: { workoutId } });
   }
 
-  /**
-   * Creates a workout for a user after verifying them.
-   * @param name Name of the workout.
-   * @param Ctx request from session, containing the user ID.
-   * @returns a WorkoutResponse, which is either a FieldError with a field and
-   * error message, or a succesfully created Workout
-   */
   @Mutation(() => Workout)
   @UseMiddleware(isAuth)
-  async createWorkout(@Arg("name") name: string, @Ctx() { payload }: Context) {
-    //for testing
-    console.log("IN");
-    console.log("payload: ", payload);
-    //input validation segment
+  async createFullWorkout(
+    @Arg("name") name: string,
+    @Arg("exercises", () => [ExerciseInput])
+    exercises: ExerciseInput[],
+    @Ctx() { payload }: Context
+  ) {
     if (name.length === 0) {
       return {
         errors: [
@@ -95,10 +117,102 @@ export class WorkoutResolver {
     workout.name = name;
     workout.creatorId = user[0].id;
 
-    console.log("got to 104");
     workout = await workoutRepository.save(workout);
 
-    console.log("workout: ", workout);
+    //exercise and set part
+    //TODO refactor this
+
+    const exerciseRepository = dataSource.getRepository(Exercise);
+    const setRepository = dataSource.getRepository(Sets);
+
+    //TODO this is horrible. fix it.
+    exercises.forEach(async (exerciseInput) => {
+      const rawMyExercise = await MyExercises.find({
+        where: { myExerciseId: exerciseInput.myExerciseId },
+      });
+      const myExercise = rawMyExercise[0];
+      const exercise = new Exercise();
+      exercise.exerciseName = myExercise.exerciseName;
+      exercise.muscleGroup = myExercise.muscleGroup;
+      exercise.creatorId = payload?.userId as number;
+      exercise.variation = exerciseInput.variation;
+      exercise.workout = workout;
+
+      exerciseRepository.save(exercise);
+
+      exerciseInput.sets.forEach(async (setInput) => {
+        if (
+          setInput.time === undefined &&
+          (setInput.reps === undefined || setInput.weight === undefined)
+        ) {
+          return false;
+        }
+        let set = new Sets();
+
+        set.weight = setInput.weight;
+        set.reps = setInput.reps;
+        set.time = setInput.time;
+        set.exercise = exercise;
+        set.creatorId = payload?.userId as number;
+
+        set = await setRepository.save(set);
+        return;
+      });
+    });
+    return workout;
+  }
+
+  /**
+   * Creates a workout for a user after verifying them.
+   * @param name Name of the workout.
+   * @param Ctx request from session, containing the user ID.
+   * @returns a WorkoutResponse, which is either a FieldError with a field and
+   * error message, or a succesfully created Workout
+   */
+  @Mutation(() => Workout)
+  @UseMiddleware(isAuth)
+  async createWorkout(@Arg("name") name: string, @Ctx() { payload }: Context) {
+    //input validation segment
+    if (name.length === 0) {
+      return {
+        errors: [
+          {
+            message: "workout name cannot be empty",
+            field: "workout",
+          },
+        ],
+      };
+    }
+    if (name.length > 30) {
+      return {
+        errors: [
+          {
+            message: "workout must have 30 or fewer characters",
+            field: "workout",
+          },
+        ],
+      };
+    }
+    //all other methods were not returning the id, or overwriting it with workout id
+    //must use repository, manually assign data (cannot use spread operator), then save via repository
+    //this is a known issue with typeorm for postgres with multiple tables, many to one, with an updatedDate column
+    // as per issues on their github
+
+    const userRepository = dataSource.getRepository(User);
+    const workoutRepository = dataSource.getRepository(Workout);
+
+    let rawUser = await userRepository.find({
+      where: { id: payload?.userId },
+    });
+    const user = rawUser[0];
+
+    let workout = new Workout();
+
+    workout.name = name;
+    workout.creatorId = payload?.userId as number;
+    workout.creator = user;
+
+    workout = await workoutRepository.save(workout);
 
     return workout;
   }
@@ -127,10 +241,10 @@ export class WorkoutResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteWorkout(
-    @Arg("workoutId", () => Int) workoutId: number
+    @Arg("workoutId", () => Int) workoutId: number,
+    @Ctx() { payload }: Context
   ): Promise<boolean> {
-    //TODO might need context for userID here as a 2nd field
-    await Workout.delete({ workoutId });
+    await Workout.delete({ workoutId, creatorId: payload?.userId });
     return true;
   }
 
@@ -138,13 +252,15 @@ export class WorkoutResolver {
   @UseMiddleware(isAuth)
   async updateWorkoutName(
     @Arg("name") name: string,
-    @Arg("workoutId", () => Int) workoutId: number
+    @Arg("workoutId", () => Int) workoutId: number,
+    @Ctx() { payload }: Context
   ): Promise<Workout> {
     const workout = await dataSource
       .createQueryBuilder()
       .update(Workout)
       .set({ name: name })
-      .where("workoutId = :workoutId", { workoutId: workoutId }) //TODO might need context for userID here as a 2nd field
+      .where("workoutId = :workoutId", { workoutId: workoutId })
+      .where({ creatorId: payload?.userId }) //TODO does this work?? 2 wheres?
       .returning("*")
       .execute();
 

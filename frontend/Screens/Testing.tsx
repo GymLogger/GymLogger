@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { AuthContext } from "../src/context/AuthContext";
-import { useGetUsersQuery, useMeQuery } from "../src/generated/graphql";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Props, RootStackParamList } from "../types";
 import { useNavigation } from "@react-navigation/native";
+import { useGetUsersQuery, useMeQuery } from "../src/generated/graphql";
 
 const Testing = ({ route, navigation }: Props) => {
   const { data, loading } = useGetUsersQuery();

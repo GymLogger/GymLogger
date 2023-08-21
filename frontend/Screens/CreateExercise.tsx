@@ -26,7 +26,9 @@ const CreateExercise: React.FC<CreateExerciseProps> = ({
   useEffect(() => {
     if (data) {
       console.log("in useEffect()");
+      console.log("data: ", data);
       setMyExercises(data.getMyExercises);
+      console.log("myExercises", myExercises);
     }
   }, [data]);
   return (
@@ -60,9 +62,6 @@ const CreateExercise: React.FC<CreateExerciseProps> = ({
         </Box>
 
         {dataMe?.me?.email && <Text>{dataMe.me.email}</Text>}
-        {myExercises !== null && !loading && (
-          <Box>{myExercises[0]?.exerciseName}</Box>
-        )}
       </ScrollView>
     </NativeBaseProvider>
   );

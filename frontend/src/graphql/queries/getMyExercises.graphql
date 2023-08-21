@@ -2,7 +2,7 @@ query GetMyExercises {
   getMyExercises {
     exerciseName
     muscleGroup
-    creatorId
     myExerciseId
+    creatorId
   }
 }

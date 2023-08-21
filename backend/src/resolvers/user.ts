@@ -11,6 +11,7 @@ import {
   Int,
 } from "type-graphql";
 import { compare, hash } from "bcryptjs";
+
 import { createAccessToken, createRefreshToken } from "../utils/auth";
 import { Context } from "../data/types";
 import { isAuth } from "../utils/isAuth";
@@ -18,6 +19,8 @@ import { dataSource } from "../data/data-source";
 import { sendRefreshToken } from "../utils/sendRefreshToken";
 import { validateRegister } from "../utils/validateRegister";
 import { verify } from "jsonwebtoken";
+import { presetExerciseList } from "../data/presetExerciseList";
+import { MyExercises } from "../entities/MyExercises";
 
 /**
  * Class for errors in resolver queries or mutations.
@@ -158,7 +161,7 @@ export class UserResolver {
    * Logs a uer in.
    * @param email user's email
    * @param password user's pw
-   * @param Ctx(), the session context containing the response
+   * @param Ctx, the session context containing the response
    * @returns
    */
   @Mutation(() => LoginResponse)
@@ -230,7 +233,7 @@ export class UserResolver {
 
     const hashedPassword = await hash(password, 12); //compares hashed pw and entered pw
     let user; //typescript woudln't let me declare user in the try block
-
+    let userId: number;
     try {
       //attempts to insert user into the DB, returns user if no issues
       const result = await dataSource
@@ -244,6 +247,7 @@ export class UserResolver {
         .returning("*")
         .execute();
       user = result.raw[0];
+      userId = user.id;
     } catch (err) {
       console.log(err);
 
@@ -267,6 +271,19 @@ export class UserResolver {
 
     //sticks a refresh token in the cookie
     sendRefreshToken(res, createRefreshToken(user));
+
+    const myExercisesRepository = dataSource.getRepository(MyExercises);
+
+    presetExerciseList.forEach(async (exercise) => {
+      console.log("exercise in map: ", exercise);
+
+      let myExercise = new MyExercises();
+      myExercise.exerciseName = exercise.exerciseName;
+      myExercise.muscleGroup = exercise.muscleGroup;
+      myExercise.creatorId = userId;
+
+      myExercise = await myExercisesRepository.save(myExercise);
+    });
 
     //access token returned
     return {

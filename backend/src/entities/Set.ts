@@ -12,18 +12,30 @@ import { Exercise } from "./Exercise";
 
 @ObjectType()
 @Entity()
-export class Set extends BaseEntity {
+export class Sets extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id!: number; //automatically generated unique set id
+  setId!: number; //automatically generated unique set id
 
   @Field()
   @Column()
-  weight: number;
+  weight?: number;
 
   @Field()
   @Column()
-  reps: number;
+  reps?: number;
+
+  @Field()
+  @Column()
+  time?: number;
+
+  @Field()
+  @Column()
+  creatorId: number;
+
+  @Field()
+  @Column()
+  exerciseId: number;
 
   @Field(() => String)
   @CreateDateColumn()

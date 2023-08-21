@@ -13,7 +13,7 @@ import { MyExercises } from "../entities/MyExercises";
 import { isAuth } from "../utils/isAuth";
 import { dataSource } from "../data/data-source";
 import { Context } from "../data/types";
-import { User } from "../entities/User";
+// import { User } from "../entities/User";
 import { FieldError } from "./user";
 
 /**
@@ -41,8 +41,11 @@ export class MyExercisesResolver {
   @UseMiddleware(isAuth)
   async getMyExercises(
     @Ctx() { payload }: Context
-  ): Promise<MyExercises[] | undefined> {
-    return MyExercises.find({ where: { creatorId: payload?.userId } });
+  ): Promise<MyExercises[] | null> {
+    return MyExercises.find({
+      where: { creatorId: payload?.userId },
+      order: { exerciseName: "ASC" },
+    });
   }
 
   /**
@@ -173,18 +176,14 @@ export class MyExercisesResolver {
       };
     }
 
-    const userRepository = dataSource.getRepository(User);
     const myExercisesRepository = dataSource.getRepository(MyExercises);
-
-    let user = await userRepository.find({
-      where: { id: payload?.userId },
-    });
 
     let myExercise = new MyExercises();
 
-    myExercise.creatorId = user[0].id;
+    myExercise.creatorId = payload?.userId as number;
     myExercise.exerciseName = exerciseName;
     myExercise.muscleGroup = muscleGroup;
+    //TODO add the creator here
 
     myExercise = await myExercisesRepository.save(myExercise);
     return { exercise: myExercise };

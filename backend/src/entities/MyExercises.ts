@@ -24,11 +24,11 @@ export class MyExercises extends BaseEntity {
 
   @Field()
   @Column()
-  exerciseName!: string;
+  exerciseName: string;
 
   @Field(() => [String])
   @Column("text", { array: true })
-  muscleGroup!: string[];
+  muscleGroup: string[];
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.myExercises)
