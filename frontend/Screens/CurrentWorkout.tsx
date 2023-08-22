@@ -79,7 +79,8 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
     const searchedExercise = dataMyExercises.getMyExercises.find(
       (element) => element.myExerciseId === parseInt(exId)
     );
-    const newExercise = { ...searchedExercise, sets: [] };
+    const newExercise = { ...searchedExercise, sets: [{ reps: 0, weight: 0 }] };
+    console.log("newExercise: ", newExercise);
     if (!exercises) {
       setExercises([newExercise]);
     } else {
@@ -88,12 +89,6 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
   };
 
   const handleAddSet = (index: number) => {
-    let oldExercise = exercises[index];
-    if (oldExercise.sets === undefined || oldExercise.sets === null) {
-      oldExercise.sets = [];
-    }
-    console.log("oldexercise.sets: ", oldExercise);
-    let newExercise = oldExercise.sets.push({ reps: 0, weight: 0 });
     let newExerciseArr = exercises;
     newExerciseArr[index].sets.push({ reps: 0, weight: 0 });
     setExercises(newExerciseArr);
