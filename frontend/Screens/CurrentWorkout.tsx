@@ -11,7 +11,7 @@ import {
   CheckIcon,
 } from "native-base";
 import { ScrollView } from "react-native-gesture-handler";
-import Exercise from "../src/components/Exercise";
+import SingleExercise from "../src/components/SingleExercise";
 import { LogBox } from "react-native";
 import { useGetMyExercisesQuery } from "../src/generated/graphql";
 import MyExerciseSearchBar from "../src/components/MyExerciseSearchBar";
@@ -23,7 +23,9 @@ export interface ExerciseProps {
   myExerciseId: number;
   muscleGroup: string[];
   // variation: string;
-  sets?: Sets[];
+  sets: Sets[];
+  index?: number;
+  handleAddSet?: (index: number) => void;
 }
 
 export interface Sets {
@@ -64,7 +66,6 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
   //loads MyExercises and sets then in state
   useEffect(() => {
     if (dataMyExercises) {
-      console.log("in the loading use effect");
       setMyExercises(dataMyExercises.getMyExercises);
     }
   }, [dataMyExercises]);
@@ -75,14 +76,27 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
   };
 
   const handleAddExercise = (exId: string) => {
-    const newExercise: ExerciseProps = dataMyExercises.getMyExercises.find(
+    const searchedExercise = dataMyExercises.getMyExercises.find(
       (element) => element.myExerciseId === parseInt(exId)
     );
+    const newExercise = { ...searchedExercise, sets: [] };
     if (!exercises) {
       setExercises([newExercise]);
     } else {
       setExercises([...exercises, newExercise]);
     }
+  };
+
+  const handleAddSet = (index: number) => {
+    let oldExercise = exercises[index];
+    if (oldExercise.sets === undefined || oldExercise.sets === null) {
+      oldExercise.sets = [];
+    }
+    console.log("oldexercise.sets: ", oldExercise);
+    let newExercise = oldExercise.sets.push({ reps: 0, weight: 0 });
+    let newExerciseArr = exercises;
+    newExerciseArr[index].sets.push({ reps: 0, weight: 0 });
+    setExercises(newExerciseArr);
   };
 
   return (
@@ -97,12 +111,15 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
         ></Input>
         <Stack direction="column">
           {!!exercises &&
-            exercises.map((exercise, index) => (
-              <Exercise
+            exercises?.map((exercise, index) => (
+              <SingleExercise
                 myExerciseId={exercise.myExerciseId}
                 exerciseName={exercise.exerciseName}
                 muscleGroup={exercise.muscleGroup}
                 key={index}
+                index={index}
+                handleAddSet={handleAddSet}
+                sets={exercise.sets}
               />
             ))}
         </Stack>
@@ -112,8 +129,6 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
             w="150"
             borderRadius="30"
             onPress={() => {
-              console.log("hi!");
-              console.log("exercises: ", exercises);
               handleAddExercise(service);
             }}
           >
