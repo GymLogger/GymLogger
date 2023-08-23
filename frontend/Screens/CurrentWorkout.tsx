@@ -23,7 +23,7 @@ export interface ExerciseProps {
   myExerciseId: number;
   muscleGroup: string[];
   // variation: string;
-  sets: Sets[];
+  sets?: Sets[];
   index?: number;
   handleAddSet?: (index: number) => void;
 }
@@ -80,8 +80,11 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
       (element) => element.myExerciseId === parseInt(exId)
     );
     const newExercise = { ...searchedExercise, sets: [{ reps: 0, weight: 0 }] };
+    // const newExercise = { ...searchedExercise };
+
     console.log("newExercise: ", newExercise);
     if (!exercises) {
+      console.log("in !exercises");
       setExercises([newExercise]);
     } else {
       setExercises([...exercises, newExercise]);
@@ -90,8 +93,14 @@ const CurrentWorkout: React.FC<CurrentWorkoutProps> = ({
 
   const handleAddSet = (index: number) => {
     let newExerciseArr = exercises;
-    newExerciseArr[index].sets.push({ reps: 0, weight: 0 });
+    console.log("exercises before pushing: ", exercises);
+    if (newExerciseArr[index].sets === undefined) {
+      newExerciseArr[index].sets = [{ reps: 0, weight: 0 }];
+    } else {
+      newExerciseArr[index].sets.push({ reps: 0, weight: 0 });
+    }
     setExercises(newExerciseArr);
+    console.log("Exercises after pushing: ", exercises);
   };
 
   return (
